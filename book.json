@@ -1,0 +1,8 @@
+{
+	"plugins":["mathjax", "-lunr", "-search", "search-plus"],
+	"pluginsConfig": {
+		"mathjax": {
+			"forceSVG": true
+		}
+	}
+}
