@@ -1,18 +1,14 @@
-# First Chapter
-
-GitBook allows you to organize your book into chapters, each chapter is stored in a separate file like this one.
 # 第一章  快速入门
 
 微软的Q\#语言是专门为量子编程打造的一款利器，它包含了开发量子程序所需要的各种工具。如果你有一定的Visual Studio使用经验，那么无论你是初学者还是经验丰富的研究人员，Q\#语言都能让你快速、高效地开发量子计算程序。
 
 在这一章中，我们将学习如何安装和搭建Q\#语言的开发环境，并通过一个具体的程序来展示Q\#如何实现一个量子程序以及Q\#语言的一些结构和特点，同时也会讲解Q\#语言如何模拟量子计算机中的量子门完成一些量子计算任务，比如量子叠加、量子纠缠等。
 
-
 ## 1.1 安装Q\#开发环境
 
 #### 1.1.1 安装前的准备
 
-* Q\#语言的模拟器应用了高级矢量扩展指令集（AVX），Intel系列CPU中 ` Sandy Bridge` 架构和之后的CPU支持这种指令集，因此要使用Q\#语言请确保你的CPU支持AVX指令集，微软也将在未来推出适用于早期CPU架构的Q\#语言开发工具。
+* Q\#语言的模拟器应用了高级矢量扩展指令集（AVX），Intel系列CPU中 `Sandy Bridge` 架构和之后的CPU支持这种指令集，因此要使用Q\#语言请确保你的CPU支持AVX指令集，微软也将在未来推出适用于早期CPU架构的Q\#语言开发工具。
 * Q\#语言必须运行在64为Windows操作系统上。
 * 使用Visual Studio 2017进行开发
 
@@ -20,7 +16,7 @@ GitBook allows you to organize your book into chapters, each chapter is stored i
 
 1. 访问[Visual Studio下载页面](https://www.visualstudio.com/downloads/) ，并选择Community版本进行下载（如果有钱也可以下载另外的版本）
 2. 下载完毕后双击安装文件
-3. **注意**：安装开始前程序会让你选择特定的开发环境和工具，记得一定要选上 **`Universal Windows Platform development` 和 `.NET desktop development`**
+3. **注意**：安装开始前程序会让你选择特定的开发环境和工具，记得一定要选上 `Universal Windows Platform development`** 和 **`.NET desktop development`
 4. 在选择好需要的环境和工具后点击“安装”即可。
 
 #### 1.1.2 构建Q\#语言开发环境
