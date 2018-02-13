@@ -76,3 +76,17 @@ $$\begin{bmatrix} 1 \\  0 \end{bmatrix} \mapsto HZH \begin{bmatrix} 1 \\  0 \end
 $$R_z(\theta) = \begin{bmatrix} e^{-i\theta/2} &amp; 0\\  0&amp; e^{i\theta/2} \end{bmatrix},\qquad R_x(\theta) = H R_z(\theta) H, \qquad R_y(\theta) = SHR_z(\theta)HS^\dagger.$$
 
 正如将任意三个旋转操作组合起来就能实现完成三维空间中的任意旋转，布罗兹球面所表示的任意幺正矩阵也能写成由三个旋转操作组成的序列，特别地，对每一个幺正矩阵$$U$$都有$$\alpha,\beta,\gamma,\delta$$使得$$U= e^{i\alpha} R_x(\beta)R_z(\gamma)R_x(\delta)$$。因此$$R_x(\theta)$$和H门也可以构成一个通用的量子门集合，当然了，因为$$\theta$$可以去任意值，因此构成的量子门集合就不是离散的了，并且考虑到量子模拟的应用场景，连续的量子门对量子计算是至关重要的，特别是在量子算法的设计层面上。最终，这些操作会被编译成离散的满足误差要求的量子门序列实现这些旋转操作。
+
+### 多量子比特
+
+虽然单量子比特拥有一些反直观的特性，例如在某一时刻同时存在多种状态，但是如果一个量子计算机中只有单量子比特门，那它所能提供的运算能力甚至不如现在的一台小小的计算器，更不用说超级计算机了。只有增加量子数，量子计算的真正能力才能体现出来，这种能力的增长，部分原因来自与量子态向量空间的维数随量子数的增加而指数上涨。这也意味着单量子系统建模比较容易，而对50个量子的模拟就会对目前的超级计算机造成压力，每增加一个量子比特，所需要的存储空间和计算时间就会翻倍。
+
+为什么量子态向量会成指数级的增长？这一节的目标就是在单量子态之外重新审视构建多量子态的规则，同时我们也会探讨要构建一台通用的量子计算机，需要那些门操作。Q#中提供了一些工具是我们在理解多量子门的过程中绝对需要的，它们也会帮助我们理解为什么应用了量子效应如量子纠缠和量子干涉就能使量子计算机比传统计算机强大那么多。
+
+#### 双量子比特的表示
+
+单量子比特与双量子比特之间的主要区别在于双量子态向量是4维而单量子态向量是2维，这是因为双量子态的计算基底是通过单量子态的张量乘积得到的，如下图所示：
+$$\begin{align}
+00 \equiv \begin{bmatrix}1 \\ 0 \end{bmatrix}\otimes \begin{bmatrix}1 \\ 0 \end{bmatrix} &amp;= \begin{bmatrix}1 \\ 0\\ 0\\ 0 \end{bmatrix},\qquad 01 \equiv \begin{bmatrix}1 \\ 0 \end{bmatrix}\otimes \begin{bmatrix}0 \\ 1 \end{bmatrix} = \begin{bmatrix}0 \\ 1\\ 0\\ 0 \end{bmatrix},\\
+	   10 \equiv \begin{bmatrix}0 \\ 1 \end{bmatrix}\otimes \begin{bmatrix}1 \\ 0 \end{bmatrix} &amp;= \begin{bmatrix}0 \\ 0\\ 1\\ 0 \end{bmatrix},\qquad 11 \equiv \begin{bmatrix}0 \\ 1 \end{bmatrix}\otimes \begin{bmatrix}0 \\ 1 \end{bmatrix} = \begin{bmatrix}0 \\ 0\\ 0\\ 1 \end{bmatrix}.
+	   \end{align}$$
