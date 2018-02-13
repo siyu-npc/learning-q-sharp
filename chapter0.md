@@ -75,4 +75,4 @@ $$\begin{bmatrix} 1 \\  0 \end{bmatrix} \mapsto HZH \begin{bmatrix} 1 \\  0 \end
 最简单的原语是单量子旋转操作。将三个单量子旋转用$$R_{x}$$、$$R_{y}$$和$$R_{z}$$表示，为了可视化旋转操作$$R_x(\theta)$$的行为，将右手大拇指指向布罗兹球面$$x$$轴的方向，然后右手旋转$$\theta/2$$弧度，相应的一元操作为：
 $$R_z(\theta) = \begin{bmatrix} e^{-i\theta/2} &amp; 0\\  0&amp; e^{i\theta/2} \end{bmatrix},\qquad R_x(\theta) = H R_z(\theta) H, \qquad R_y(\theta) = SHR_z(\theta)HS^\dagger.$$
 
-正如将任意三个旋转操作组合起来就能实现完成三维空间中的任意旋转，布罗兹球面所表示的任意幺正矩阵也能写成由三个旋转操作组成的序列，特别地，对每一个幺正矩阵$$U$$都有$$\alpha,\beta,\gamma,\delta$$使得$$U= e^{i\alpha} R_x(\beta)R_z(\gamma)R_x(\delta)$$。因此
+正如将任意三个旋转操作组合起来就能实现完成三维空间中的任意旋转，布罗兹球面所表示的任意幺正矩阵也能写成由三个旋转操作组成的序列，特别地，对每一个幺正矩阵$$U$$都有$$\alpha,\beta,\gamma,\delta$$使得$$U= e^{i\alpha} R_x(\beta)R_z(\gamma)R_x(\delta)$$。因此$$R_x(\theta)$$和H门也可以构成一个通用的量子门集合，当然了，因为$$\theta$$可以去任意值，因此构成的量子门集合就不是离散的了，并且考虑到量子模拟的应用场景，连续的量子门对量子计算是至关重要的，特别是在量子算法的设计层面上。
