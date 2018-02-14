@@ -152,12 +152,12 @@ ae\ af\ be\ bf \\
         cg\ ch\ dg\ dh
         \end{bmatrix}.$$
 
-因此，我们可以使用已知的单量子门来构建双量子门，这样的例子包括：$$H \otimes H$$, $$X \otimes \bold 1$$,和 $$X \otimes Z$$。
+因此，我们可以使用已知的单量子门来构建双量子门，这样的例子包括：$$H \otimes H$$, $$X \otimes 1$$,和 $$X \otimes Z$$。
 
 虽然两个单量子门的张量积可以定义一个双量子门，但所有的双量子门并非都能由单量子门构建而成，不能由两个单量子门的张量积表示的双量子门叫做纠缠门，CNOT门就是一个纠缠门的例子。
 
 对于CNOT门的认知可以推广到任意的门。一个受控的门一般来说扮演着身份验证的角色除非一个特定的量子比特是$$1$$。我们将应用于量子比特$$x$$上的受控的幺正变换标记为$$\Lambda_x(U)$$，那么对于它有：$$\Lambda_0(U) e_{1}\otimes {\psi}=e_{1}\otimes U{\psi}$$和$$\Lambda_0(U) e_{0}\otimes {\psi}=e_{0}\otimes{\psi}$$，这里的$$e_{0}$$和$$e_{1}$$是量子态为$$0$$和$$1$$对应的单量子态基向量，例如对于下面的受控$$Z$$门，我们可以将其表示为：  
-$$ \Lambda_0(Z)= \begin{bmatrix}1;0;0;0\\0;1;0;0\\0;0;1;0\\0;0;0;-1 \end{bmatrix}=(\boldone \otimes H)\operatorname{CNOT}(\boldone \otimes H).  $$
+$$ \Lambda_0(Z)= \begin{bmatrix}1;0;0;0\\0;1;0;0\\0;0;1;0\\0;0;0;-1 \end{bmatrix}=(1 \otimes H)\operatorname{CNOT}(1 \otimes H).  $$
 
 用有效的方式构建受控的幺正变换是一个主要的挑战，实现这一点的最简单的方法是建立一个基础门操作的受控版本的数据库，并在最初的幺正变换中用受控操作替代对应的基本门操作。但这样做是相当浪费的，有一些灵巧的办法可以只替换某些门操作来达到同样的效果。在微软量子开发框架中，我们提供了原始的、受控的方法，并且也允许用户自定义一个幺正变换的受控版本。
 
@@ -171,7 +171,7 @@ $$ \Lambda_0(Z)= \begin{bmatrix}1;0;0;0\\0;1;0;0\\0;0;1;0\\0;0;0;-1 \end{bmatrix
 $$ 1011001 \equiv \begin{bmatrix} 0 \\  1 \end{bmatrix}\otimes \begin{bmatrix} 1 \\  0 \end{bmatrix}\otimes \begin{bmatrix} 0 \\  1 \end{bmatrix}\otimes \begin{bmatrix} 0 \\  1 \end{bmatrix} \otimes \begin{bmatrix} 1 \\  0 \end{bmatrix}\otimes \begin{bmatrix} 1 \\  0 \end{bmatrix}\otimes \begin{bmatrix} 0 \\  1 \end{bmatrix}.  $$
 
 量子门的工作方式与上面相同。例如，我们对多量子系统中的第一个量子比特应用$$X$$门，在第二个和第三个量子比特之间应用CNOT门，那么整个变换可以表示为：  
-$$\begin{align} (X \otimes \operatorname{CNOT}_{12}\otimes \boldone\otimes \boldone \otimes \boldone) \begin{bmatrix} 0 \\  1 \end{bmatrix}\otimes \begin{bmatrix} 1 \\  0 \end{bmatrix}\otimes \begin{bmatrix} 0 \\  1 \end{bmatrix}\otimes \begin{bmatrix} 0 \\  1 \end{bmatrix} \otimes \begin{bmatrix} 1 \\  0 \end{bmatrix}\otimes \begin{bmatrix} 1 \\  0 \end{bmatrix}\otimes \begin{bmatrix} 0 \\  1 \end{bmatrix}\\ \qquad\qquad\equiv 0011001.  \end{align}$$
+$$\begin{align} (X \otimes \operatorname{CNOT}_{12}\otimes 1 \otimes 1 \otimes 1) \begin{bmatrix} 0 \\  1 \end{bmatrix}\otimes \begin{bmatrix} 1 \\  0 \end{bmatrix}\otimes \begin{bmatrix} 0 \\  1 \end{bmatrix}\otimes \begin{bmatrix} 0 \\  1 \end{bmatrix} \otimes \begin{bmatrix} 1 \\  0 \end{bmatrix}\otimes \begin{bmatrix} 1 \\  0 \end{bmatrix}\otimes \begin{bmatrix} 0 \\  1 \end{bmatrix}\\ \qquad\qquad\equiv 0011001.  \end{align}$$
 
 在多量子系统中，经常需要分配和释放计算机中临时的量子比特所占用的空间，这些临时的量子变量又叫做“附属（ancilla）”量子。默认情况下，新分配的量子比特都被初始化为$$e_{0}$$状态，我们进一步假定在释放之前，这个量子比特的状态重新回到$$e_{0}$$。这个假定很重要，因为如果一个附属量子在被释放时与其他量子寄存器纠缠，那么对它的释放就会破坏其他量子的状态，因此，我们才认定一个量子比特被释放时要回到最初的状态。
 
