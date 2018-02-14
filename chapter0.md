@@ -55,7 +55,7 @@ $$0\equiv \begin{bmatrix} 1 \\ 0 \end{bmatrix}\qquad 1 \equiv \begin{bmatrix} 0 
 
 在量子计算中，我们能够在量子位上执行的合法的变换包括单一变化和测量。共轭操作也叫复共轭转置，他对量子计算有着至关重要的作用，因为在量子反转中需要用到它。Q\#通过自动将门序列编译到它们的共轭矩阵的方式来实现这一功能，将开发者从手工编码的泥潭中解放出来，大大减轻了开发者的负担。
 
-在经典计算中，只有四种操作将一个比特映射到另一个比特（与、或、非、异或），但在量子计算机中，变换一个量子比特状态的操作是无穷的，因此在量子计算中，不存在一个有限的基本操作集合（门集合）能完全覆盖所允许的无穷的单一变换，这也意味着，量子计算机不可能像经典计算机那样使用有限的门操作来实现所有的量子算法，因此量子计算机不会像经典计算机一样通用。当我们谈到一个门集合对量子计算是通用的时候，我们实际要表达的意思要比完全通用弱化。对于通用性，我们要求量子计算机只在一个有限的误差内使用一个有限长的门序列来逼近某一幺正矩阵，或者说，只要任意的单一变换在误差允许范围内能够写作一个有限长的门操作序列的乘积，那么这个门集合就是通用的，如下所示：
+在经典计算中，只有四种操作将一个比特映射到另一个比特（与、或、非、异或），但在量子计算机中，变换一个量子比特状态的操作是无穷的，因此在量子计算中，不存在一个有限的基本操作集合（门集合）能完全覆盖所允许的无穷的一元变换，这也意味着，量子计算机不可能像经典计算机那样使用有限的门操作来实现所有的量子算法，因此量子计算机不会像经典计算机一样通用。当我们谈到一个门集合对量子计算是通用的时候，我们实际要表达的意思要比完全通用弱化。对于通用性，我们要求量子计算机只在一个有限的误差内使用一个有限长的门序列来逼近某一幺正矩阵，或者说，只要任意的一元变换在误差允许范围内能够写作一个有限长的门操作序列的乘积，那么这个门集合就是通用的，如下所示：
 
 $$G_N G_{N-1} \cdots G_2 G_1 \approx U.$$
 
@@ -65,9 +65,9 @@ $$G_N G_{N-1} \cdots G_2 G_1 \approx U.$$
 $$H=\frac{1}{\sqrt{2}}\begin{bmatrix} 1 ; 1 \\  1  ;-1  \end{bmatrix},\qquad T=\begin{bmatrix} 1  ; 0 \\  0  ; e^{i\pi/4} \end{bmatrix}.$$
 
 但是考虑到量子就做的现实原因，一个更大的集合能够带来更多的便利，集合中其他的门可以有H和T门生成。我们将量子门分为两类：Clifford门和T门，这样分类是因为Clifford门在许多量子纠错方案中实现起来很方便，就操作和量子比特而言，他们需要很少的资源就能实现较好的容错率，然而非Clifford门的消耗就非常大了。在Q\#中，标准的单量子Clifford门包括：  
-$$H=\frac{1}{\sqrt{2}}\begin{bmatrix} 1 ; 1 \\  1  ;-1  \end{bmatrix} ,\qquad S =\begin{bmatrix} 1  ; 0 \\  0  ; i \end{bmatrix}= T^2,\qquad X=\begin{bmatrix} 0  ;1 \\  1 ; 0 \end{bmatrix}= HT^4H,$$$$Y = \begin{bmatrix} 0 &amp; -i \\  i &amp; 0 \end{bmatrix}=T^2HT^4  HT^6, \qquad Z=\begin{bmatrix}1&amp;0\\ 0&amp;-1 \end{bmatrix}=T^4.$$
+$$H=\frac{1}{\sqrt{2}}\begin{bmatrix} 1 ; 1 \\  1  ;-1  \end{bmatrix} ,\qquad S =\begin{bmatrix} 1  ; 0 \\  0  ; i \end{bmatrix}= T^2,\qquad X=\begin{bmatrix} 0  ;1 \\  1 ; 0 \end{bmatrix}= HT^4H,$$$$Y = \begin{bmatrix} 0 ; -i \\  i ; 0 \end{bmatrix}=T^2HT^4  HT^6, \qquad Z=\begin{bmatrix}1;0\\ 0;-1 \end{bmatrix}=T^4.$$
 
-这些门中，X、Y和Z应用的非常广泛，它们也被成为Pauli操作符，这些门操作和非Clifford门一起就能组合出任意单一变换作用与单个量子上。下面的例子展示了如何用这些基本操作构建一个一元变换，图0.1中的三个变换对应于以下门操作序列：
+这些门中，X、Y和Z应用的非常广泛，它们也被成为Pauli操作符，这些门操作和非Clifford门一起就能组合出任意一元变换作用与单个量子上。下面的例子展示了如何用这些基本操作构建一个一元变换，图0.1中的三个变换对应于以下门操作序列：
 $$\begin{bmatrix} 1 \\  0 \end{bmatrix} \mapsto HZH \begin{bmatrix} 1 \\  0 \end{bmatrix} = \begin{bmatrix} 0 \\  1 \end{bmatrix}$$
 
 前面的门操作在堆栈逻辑级别上构成了最基本的原语（逻辑级别等同与量子算法级别），但在算法级别较少地考虑基本操作会带来更大的便利，比如多使用近似函数级别的操作。幸运的是Q#中包含有很多用于实现高层次一元操作的方法，有了他们我们在实现更高层次的算法时就不需要将其分解为基本的Clifford和T门。
@@ -129,3 +129,33 @@ $$ \frac{1}{4}\left|\begin{bmatrix}0;0 ;1 ;0\end{bmatrix}\begin{bmatrix}1\\ 1\\ 
 
 同时，对应的量子态也可以写作：
 $$ \frac{\frac{e_2}{2}+\frac{e_3}{2}}{\sqrt{\frac{1}{2}}}=\frac{1}{\sqrt{2}}\begin{bmatrix} 0\\ 0\\ 1\\ 1\end{bmatrix} $$
+
+#### 双量子比特操作
+
+在单量子情况下，任何一元变换都是有效的。通常来说，施加与多量子比特上的一元操作是一个大小为$$ 2 ^ {n} \times 2 ^{n} $$的矩阵（所以它作用与大小为$$2^{n}$$的向量上）并且$$U^{-1} = U^\dagger$$。例如，CNOT（controlled-NOT）门是一个用途广泛的双量子门，它使用如下单位矩阵表示：
+$$\operatorname{CNOT} = \begin{bmatrix} 1\ 0\ 0\ 0  \\  0\ 1\ 0\ 0 \\  0\ 0\ 0\ 1 \\  0\ 0\ 1\ 0 \end{bmatrix}$$
+
+我们也可用单量子门操作来构造双量子门。假设对一个双量子系统，我们对其第一个和第二个量子比特分别应用下面两个门：
+$$ \begin{bmatrix} a\ b\\ c\ d \end{bmatrix} \begin{bmatrix} e\ f\\ g\ h \end{bmatrix} $$
+
+这等价于对双量子系统应用这两个门的张量积：
+$$\begin{bmatrix}
+a\ b\\ c\ d
+\end{bmatrix}
+\otimes 
+\begin{bmatrix}
+e\ f\\ g\ h
+\end{bmatrix}=
+\begin{bmatrix}
+ae\ af\ be\ bf \\
+		ag\ ah\ bg\ bh \\
+		ce\ cf\ de\ df \\
+		cg\ ch\ dg\ dh
+		\end{bmatrix}.$$
+
+因此，我们可以使用已知的单量子门来构建双量子门，这样的例子包括：$$H \otimes H$, $X \otimes \boldone$, and $X \otimes Z$$。
+
+虽然两个单量子门的张量积可以定义一个双量子门，但所有的双量子门并非都能由单量子门构建而成，不能由两个单量子门的张量积表示的双量子门叫做纠缠门，CNOT门就是一个纠缠门的例子。
+
+对于CNOT门的认知可以推广到任意的门。一个受控的门一般来说扮演着身份验证的角色除非一个特定的量子比特是$$1$$。我们将应用于量子比特$$x$$上的受控的一元操作标记为$$\Lambda_x(U)$$，那么对于它有：$$\Lambda_0(U) e_{1}\otimes {\psi}=e_{1}\otimes U{\psi}$$和$$\Lambda_0(U) e_{0}\otimes {\psi}=e_{0}\otimes{\psi}$$，这里的$$e_{0}$$和$$e_{1}$$是量子态为$$0$$和$$1$$对应的单量子态基向量，例如对于下面的受控$$Z$$门，我们可以将其表示为：
+$$ \Lambda_0(Z)= \begin{bmatrix}1;0;0;0\\0;1;0;0\\0;0;1;0\\0;0;0;-1 \end{bmatrix}=(\boldone\otimes H)\operatorname{CNOT}(\boldone\otimes H).  $$
