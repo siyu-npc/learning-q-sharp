@@ -44,8 +44,8 @@ $$0\equiv \begin{bmatrix} 1 \\ 0 \end{bmatrix}\qquad 1 \equiv \begin{bmatrix} 0 
 
 量子位也可以使用布罗兹球面3D化显示。布罗兹球面用三维的实值向量来描述单量子的量子态，如上所述，单个量子的状态由一个二维实值向量来描述。布罗兹球面使得一个量子的状态可视化，正因此，它在我们理解多量子状态时也有极大的作用。可视化的布罗兹球面如下所示：
 
-![](/Image/BlochSphere.png)
-	图0.1 布罗兹球面
+![](/Image/BlochSphere.png)  
+    图0.1 布罗兹球面
 
 图中的箭头指示了量子态向量的方向，箭头的每一次变换都可以看作是一个基本轴的旋转，那么自然而然我们可以将将量子态的变换看做是一系列的旋转变换，当然使用这种思想来设和描述量子算法也是一个不小的挑战，但Q\#为我们提供了能够方便地描述这些旋转操作的语言，从而简化了我们解决问题的负担。
 
@@ -67,12 +67,12 @@ $$H=\frac{1}{\sqrt{2}}\begin{bmatrix} 1 ; 1 \\  1  ;-1  \end{bmatrix},\qquad T=\
 但是考虑到量子就做的现实原因，一个更大的集合能够带来更多的便利，集合中其他的门可以有H和T门生成。我们将量子门分为两类：Clifford门和T门，这样分类是因为Clifford门在许多量子纠错方案中实现起来很方便，就操作和量子比特而言，他们需要很少的资源就能实现较好的容错率，然而非Clifford门的消耗就非常大了。在Q\#中，标准的单量子Clifford门包括：  
 $$H=\frac{1}{\sqrt{2}}\begin{bmatrix} 1 ; 1 \\  1  ;-1  \end{bmatrix} ,\qquad S =\begin{bmatrix} 1  ; 0 \\  0  ; i \end{bmatrix}= T^2,\qquad X=\begin{bmatrix} 0  ;1 \\  1 ; 0 \end{bmatrix}= HT^4H,$$$$Y = \begin{bmatrix} 0 ; -i \\  i ; 0 \end{bmatrix}=T^2HT^4  HT^6, \qquad Z=\begin{bmatrix}1;0\\ 0;-1 \end{bmatrix}=T^4.$$
 
-这些门中，X、Y和Z应用的非常广泛，它们也被成为Pauli操作符，这些门操作和非Clifford门一起就能组合出任意幺正变换作用与单个量子上。下面的例子展示了如何用这些基本操作构建一个幺正变换，图0.1中的三个变换对应于以下门操作序列：
+这些门中，X、Y和Z应用的非常广泛，它们也被成为Pauli操作符，这些门操作和非Clifford门一起就能组合出任意幺正变换作用与单个量子上。下面的例子展示了如何用这些基本操作构建一个幺正变换，图0.1中的三个变换对应于以下门操作序列：  
 $$\begin{bmatrix} 1 \\  0 \end{bmatrix} \mapsto HZH \begin{bmatrix} 1 \\  0 \end{bmatrix} = \begin{bmatrix} 0 \\  1 \end{bmatrix}$$
 
-前面的门操作在堆栈逻辑级别上构成了最基本的原语（逻辑级别等同与量子算法级别），但在算法级别较少地考虑基本操作会带来更大的便利，比如多使用近似函数级别的操作。幸运的是Q#中包含有很多用于实现高层次幺正变换的方法，有了他们我们在实现更高层次的算法时就不需要将其分解为基本的Clifford和T门。
+前面的门操作在堆栈逻辑级别上构成了最基本的原语（逻辑级别等同与量子算法级别），但在算法级别较少地考虑基本操作会带来更大的便利，比如多使用近似函数级别的操作。幸运的是Q\#中包含有很多用于实现高层次幺正变换的方法，有了他们我们在实现更高层次的算法时就不需要将其分解为基本的Clifford和T门。
 
-最简单的原语是单量子旋转操作。将三个单量子旋转用$$R_{x}$$、$$R_{y}$$和$$R_{z}$$表示，为了可视化旋转操作$$R_x(\theta)$$的行为，将右手大拇指指向布罗兹球面$$x$$轴的方向，然后右手旋转$$\theta/2$$弧度，相应的幺正变换为：
+最简单的原语是单量子旋转操作。将三个单量子旋转用$$R_{x}$$、$$R_{y}$$和$$R_{z}$$表示，为了可视化旋转操作$$R_x(\theta)$$的行为，将右手大拇指指向布罗兹球面$$x$$轴的方向，然后右手旋转$$\theta/2$$弧度，相应的幺正变换为：  
 $$R_z(\theta) = \begin{bmatrix} e^{-i\theta/2} ; 0\\  0 ; e^{i\theta/2} \end{bmatrix},\qquad R_x(\theta) = H R_z(\theta) H, \qquad R_y(\theta) = SHR_z(\theta)HS^\dagger.$$
 
 正如将任意三个旋转操作组合起来就能实现完成三维空间中的任意旋转，布罗兹球面所表示的任意幺正矩阵也能写成由三个旋转操作组成的序列，特别地，对每一个幺正矩阵$$U$$都有$$\alpha,\beta,\gamma,\delta$$使得$$U= e^{i\alpha} R_x(\beta)R_z(\gamma)R_x(\delta)$$。因此$$R_x(\theta)$$和H门也可以构成一个通用的量子门集合，当然了，因为$$\theta$$可以去任意值，因此构成的量子门集合就不是离散的了，并且考虑到量子模拟的应用场景，连续的量子门对量子计算是至关重要的，特别是在量子算法的设计层面上。最终，这些操作会被编译成离散的满足误差要求的量子门序列实现这些旋转操作。
@@ -81,64 +81,63 @@ $$R_z(\theta) = \begin{bmatrix} e^{-i\theta/2} ; 0\\  0 ; e^{i\theta/2} \end{bma
 
 虽然单量子比特拥有一些反直观的特性，例如在某一时刻同时存在多种状态，但是如果一个量子计算机中只有单量子比特门，那它所能提供的运算能力甚至不如现在的一台小小的计算器，更不用说超级计算机了。只有增加量子数，量子计算的真正能力才能体现出来，这种能力的增长，部分原因来自与量子态向量空间的维数随量子数的增加而指数上涨。这也意味着单量子系统建模比较容易，而对50个量子的模拟就会对目前的超级计算机造成压力，每增加一个量子比特，所需要的存储空间和计算时间就会翻倍。
 
-为什么量子态向量会成指数级的增长？这一节的目标就是在单量子态之外重新审视构建多量子态的规则，同时我们也会探讨要构建一台通用的量子计算机，需要那些门操作。Q#中提供了一些工具是我们在理解多量子门的过程中绝对需要的，它们也会帮助我们理解为什么应用了量子效应如量子纠缠和量子干涉就能使量子计算机比传统计算机强大那么多。
+为什么量子态向量会成指数级的增长？这一节的目标就是在单量子态之外重新审视构建多量子态的规则，同时我们也会探讨要构建一台通用的量子计算机，需要那些门操作。Q\#中提供了一些工具是我们在理解多量子门的过程中绝对需要的，它们也会帮助我们理解为什么应用了量子效应如量子纠缠和量子干涉就能使量子计算机比传统计算机强大那么多。
 
 #### 双量子比特的表示
 
-单量子比特与双量子比特之间的主要区别在于双量子态向量是4维而单量子态向量是2维，这是因为双量子态的计算基底是通过单量子态的张量乘积得到的，如下图所示：
+单量子比特与双量子比特之间的主要区别在于双量子态向量是4维而单量子态向量是2维，这是因为双量子态的计算基底是通过单量子态的张量乘积得到的，如下图所示：  
 $$\begin{align}
 00 \equiv \begin{bmatrix}1 \\ 0 \end{bmatrix}\otimes \begin{bmatrix}1 \\ 0 \end{bmatrix} ;= \begin{bmatrix}1 \\ 0\\ 0\\ 0 \end{bmatrix},\qquad 01 \equiv \begin{bmatrix}1 \\ 0 \end{bmatrix}\otimes \begin{bmatrix}0 \\ 1 \end{bmatrix} = \begin{bmatrix}0 \\ 1\\ 0\\ 0 \end{bmatrix},\\
-	   10 \equiv \begin{bmatrix}0 \\ 1 \end{bmatrix}\otimes \begin{bmatrix}1 \\ 0 \end{bmatrix} ;= \begin{bmatrix}0 \\ 0\\ 1\\ 0 \end{bmatrix},\qquad 11 \equiv \begin{bmatrix}0 \\ 1 \end{bmatrix}\otimes \begin{bmatrix}0 \\ 1 \end{bmatrix} = \begin{bmatrix}0 \\ 0\\ 0\\ 1 \end{bmatrix}.
-	   \end{align}$$
+       10 \equiv \begin{bmatrix}0 \\ 1 \end{bmatrix}\otimes \begin{bmatrix}1 \\ 0 \end{bmatrix} ;= \begin{bmatrix}0 \\ 0\\ 1\\ 0 \end{bmatrix},\qquad 11 \equiv \begin{bmatrix}0 \\ 1 \end{bmatrix}\otimes \begin{bmatrix}0 \\ 1 \end{bmatrix} = \begin{bmatrix}0 \\ 0\\ 0\\ 1 \end{bmatrix}.
+       \end{align}$$
 
-容易知道，$$n$$个量子的量子态向量可以通过$$2^{n}$$维的单位向量用同样的方法进行构造。就像单量子比特一样，双量子比特的量子态向量：
-$$\begin{bmatrix} \alpha_{00} \\  \alpha_{01} \\  \alpha_{10} \\  \alpha_{11} \end{bmatrix}$$
+容易知道，$$n$$个量子的量子态向量可以通过$$2^{n}$$维的单位向量用同样的方法进行构造。就像单量子比特一样，双量子比特的量子态向量：  
+$$\begin{bmatrix} \alpha_{00} \\  \alpha_{01} \\  \alpha_{10} \\  \alpha_{11} \end{bmatrix}$$  
 满足：$$|\alpha_{00}|^2+|\alpha_{01}|^2+|\alpha_{10}|^2+|\alpha_{11}|^2=1$$，并且多量子态向量保存着描述系统状态的所有信息。
 
-如果给出两个独立的量子比特，一个的状态为$$\begin{bmatrix} \alpha \\  \beta \end{bmatrix}$$，另一个状态为$$\begin{bmatrix} \gamma \\  \delta \end{bmatrix}$$，那么这两个量子比特组成的双量子系统的状态就是：
+如果给出两个独立的量子比特，一个的状态为$$\begin{bmatrix} \alpha \\  \beta \end{bmatrix}$$，另一个状态为$$\begin{bmatrix} \gamma \\  \delta \end{bmatrix}$$，那么这两个量子比特组成的双量子系统的状态就是：  
 $$\begin{bmatrix} \alpha \\  \beta \end{bmatrix} \otimes \begin{bmatrix} \gamma \\  \delta \end{bmatrix} 
 =\begin{bmatrix} \alpha \begin{bmatrix} \gamma \\  \delta \end{bmatrix} \\ \beta \begin{bmatrix}\gamma \\  \delta \end{bmatrix} \end{bmatrix}
 = \begin{bmatrix} \alpha\gamma \\  \alpha\delta \\  \beta\gamma \\  \beta\delta \end{bmatrix},$$
 
-上面的$$\otimes$$符号表示向量的张量积（克罗内克积）。需要注意的是，虽然我们总能使用两个单量子态向量来构建一个双量子系统的量子态向量，但并非所有的双量子系统状态都能表示成两个单量子态向量的张量积。例如，不存在这样两个向量$$\psi=\begin{bmatrix} \alpha \\  \beta \end{bmatrix}$ and $\phi=\begin{bmatrix} \gamma \\  \delta \end{bmatrix}$$，使得他们的张量积为：
-$$\psi\otimes \phi = \begin{bmatrix} 1/\sqrt{2} \\  0 \\  0 \\  1/\sqrt{2} \end{bmatrix}.$$
+上面的$$\otimes$$符号表示向量的张量积（克罗内克积）。需要注意的是，虽然我们总能使用两个单量子态向量来构建一个双量子系统的量子态向量，但并非所有的双量子系统状态都能表示成两个单量子态向量的张量积。例如，不存在这样两个向量$$\psi=\begin{bmatrix} \alpha \  \beta \end{bmatrix}$ and $\phi=\begin{bmatrix} \gamma \  \delta \end{bmatrix}$$，使得他们的张量积为：$$\psi\otimes \phi = \begin{bmatrix} 1/\sqrt{2} \  0 \  0 \  1/\sqrt{2} \end{bmatrix}.$$
 
 不能用两个单量子态向量的张量积来表示的双量子态叫做“纠缠态”，并且这两个量子比特被成为纠缠的。不严格地说，双量子态不能被认为是两个单量子比特的张量积，这个状态所持有的信息也不局限与两个单量子态中的一个，而是非局部地存储于两个量子态之间的联系中，这种信息的非局部性是量子计算和传统计算之间的主要区别之一，其对许多量子协议也是必不可少的，比如量子隐形传态和量子纠错。
 
 #### 双量子态的测量
 
-双量子比特量子态的测量与单量子类似。测量一个状态为：
-$$\begin{bmatrix} \alpha_{00} \\ \alpha_{01} \\ \alpha_{10} \\ \alpha_{11} \end{bmatrix} $$
-的双量子系统，有$$|\alpha_{00}|^2$$的概率得到结果$$00$$，$$|\alpha_{01}|^2$$的概率得到结果$$01$$，$$|\alpha_{10}|^2$$的概率得到结果$$10$$，$$|\alpha_{11}|^2$$的概率得到结果$$11$$。在测量之后如果得到的结果是$$00$$，那么双量子系统的量子太已经坍塌为：
+双量子比特量子态的测量与单量子类似。测量一个状态为：  
+$$\begin{bmatrix} \alpha_{00} \\ \alpha_{01} \\ \alpha_{10} \\ \alpha_{11} \end{bmatrix} $$  
+的双量子系统，有$$|\alpha_{00}|^2$$的概率得到结果$$00$$，$$|\alpha_{01}|^2$$的概率得到结果$$01$$，$$|\alpha_{10}|^2$$的概率得到结果$$10$$，$$|\alpha_{11}|^2$$的概率得到结果$$11$$。在测量之后如果得到的结果是$$00$$，那么此时双量子系统的量子态已经坍塌为：  
 $$ 00 \equiv \begin{bmatrix} 1 \\ 0 \\ 0 \\ 0 \end{bmatrix}.  $$
 
-测量一个双量子系统中的某个量子的状态也是可行的，在只测量一个量子位的情况下，测量的影响是稍微不同的，因为整个系统的状态不会坍塌到计算基础状态，而是坍塌到一个子系统，或者说，在只测量一个量子位只是让其中一个子系统坍塌而不是整个双量子系统。为了理解这个现象，考虑测量如下所示状态中的第一个量子：
+测量一个双量子系统中的某个量子的状态也是可行的，在只测量一个量子位的情况下，测量的影响是稍微不同的，因为整个系统的状态不会坍塌到计算基础状态，而是坍塌到一个子系统，或者说，在只测量一个量子位只是让其中一个子系统坍塌而不是整个双量子系统。为了理解这个现象，考虑测量如下所示状态中的第一个量子：  
 $$H^{\otimes 2} \left( \begin{bmatrix}1 \\ 0 \end{bmatrix}\otimes \begin{bmatrix}1 \\ 0 \end{bmatrix} \right) = \frac{1}{2}\begin{bmatrix}1\\ 1\\ 1\\ 1\end{bmatrix}\mapsto \begin{cases}\text{outcome }=0 ; \frac{1}{\sqrt{2}}\begin{bmatrix}1\\ 1\\ 0\\ 0 \end{bmatrix}\\ \text{outcome }=1  ; \frac{1}{\sqrt{2}}\begin{bmatrix}0\\ 0\\ 1\\ 1 \end{bmatrix}\\  \end{cases}.$$
 
-两个输出结果各占50%的概率。测量第一个或第二个量子比特状态的数学规则很简单，假设我们让$$e_{k}$$作为第$$k$$个基向量，让$$S$$表示所有第$$k$$个元素为$$1$$的向量的集合，例如我们要测量第一个量子的状态，那么$$S$$中包括$$e_2\equiv 10$$和$$e_3\equiv 11$$，如果要测量第二个量子的状态，那么$$S$$就由$$e_1\equiv 01$$和$$e_3 \equiv 11$$组成。对于量子态向量为$$\psi$$的量子，测量得到其状态为$$1$$的该率为：
+两个输出结果各占50%的概率。测量第一个或第二个量子比特状态的数学规则很简单，假设我们让$$e_{k}$$作为第$$k$$个基向量，让$$S$$表示所有第$$k$$个元素为$$1$$的向量的集合，例如我们要测量第一个量子的状态，那么$$S$$中包括$$e_2\equiv 10$$和$$e_3\equiv 11$$，如果要测量第二个量子的状态，那么$$S$$就由$$e_1\equiv 01$$和$$e_3 \equiv 11$$组成。对于量子态向量为$$\psi$$的量子，测量得到其状态为$$1$$的该率为：  
 $$P(\text{outcome}=1)= \sum_{k \text{ in the set } S}\psi^\dagger e_k e_k^\dagger \psi.$$
 
-因为测量量子比特所得的结果只能是$$0$$或者$$1$$，得到$$0$$的概率就是$$1-P(\text{outcome}=1)$$。这样的测量行为可以用数学形式表述为：
+因为测量量子比特所得的结果只能是$$0$$或者$$1$$，得到$$0$$的概率就是$$1-P(\text{outcome}=1)$$。这样的测量行为可以用数学形式表述为：  
 $$ \psi \mapsto \frac{\sum_{k \text{ in the set } S} e_k e_k^\dagger \psi}{\sqrt{P(\text{outcome}=1)}}.  $$
 
-如果我们将上面的向量$$ \psi $$看做单位向量，那么测量第一个量子得到$$1$$的概率为：
+如果我们将上面的向量$$ \psi $$看做单位向量，那么测量第一个量子得到$$1$$的概率为：  
 $$ P(\text{measurement of first qubit}=1) = (\psi^\dagger e_2)(e_2^\dagger \psi)+(\psi^\dagger e_3)(e_3^\dagger \psi)=|e_2^\dagger \psi|^2+|e_3^\dagger \psi|^2.  $$
 
-注意，这只是测量结果的两个概率的总和，10和11是所有要测量的量子位，对我们上面的例子而言，计算时是这样的：
+注意，这只是测量结果的两个概率的总和，10和11是所有要测量的量子位，对我们上面的例子而言，计算时是这样的：  
 $$ \frac{1}{4}\left|\begin{bmatrix}0;0 ;1 ;0\end{bmatrix}\begin{bmatrix}1\\ 1\\ 1\\ 1\end{bmatrix} \right|^2+\frac{1}{4}\left|\begin{bmatrix}0 ;0 ;0 ;1\end{bmatrix}\begin{bmatrix}1\\ 1\\ 1\\ 1\end{bmatrix} \right|^2=\frac{1}{2}.  $$
 
-同时，对应的量子态也可以写作：
+同时，对应的量子态也可以写作：  
 $$ \frac{\frac{e_2}{2}+\frac{e_3}{2}}{\sqrt{\frac{1}{2}}}=\frac{1}{\sqrt{2}}\begin{bmatrix} 0\\ 0\\ 1\\ 1\end{bmatrix} $$
 
 #### 双量子比特操作
 
-在单量子情况下，任何幺正变换都是有效的。通常来说，施加与多量子比特上的幺正变换是一个大小为$$ 2 ^ {n} \times 2 ^{n} $$的矩阵（所以它作用与大小为$$2^{n}$$的向量上）并且$$U^{-1} = U^\dagger$$。例如，CNOT（controlled-NOT）门是一个用途广泛的双量子门，它使用如下单位矩阵表示：
+在单量子情况下，任何幺正变换都是有效的。通常来说，施加与多量子比特上的幺正变换是一个大小为$$ 2 ^ {n} \times 2 ^{n} $$的矩阵（所以它作用与大小为$$2^{n}$$的向量上）并且$$U^{-1} = U^\dagger$$。例如，CNOT（controlled-NOT）门是一个用途广泛的双量子门，它使用如下单位矩阵表示：  
 $$\operatorname{CNOT} = \begin{bmatrix} 1\ 0\ 0\ 0  \\  0\ 1\ 0\ 0 \\  0\ 0\ 0\ 1 \\  0\ 0\ 1\ 0 \end{bmatrix}$$
 
-我们也可用单量子门操作来构造双量子门。假设对一个双量子系统，我们对其第一个和第二个量子比特分别应用下面两个门：
+我们也可用单量子门操作来构造双量子门。假设对一个双量子系统，我们对其第一个和第二个量子比特分别应用下面两个门：  
 $$ \begin{bmatrix} a\ b\\ c\ d \end{bmatrix} \begin{bmatrix} e\ f\\ g\ h \end{bmatrix} $$
 
-这等价于对双量子系统应用这两个门的张量积：
+这等价于对双量子系统应用这两个门的张量积：  
 $$\begin{bmatrix}
 a\ b\\ c\ d
 \end{bmatrix}
@@ -148,16 +147,16 @@ e\ f\\ g\ h
 \end{bmatrix}=
 \begin{bmatrix}
 ae\ af\ be\ bf \\
-		ag\ ah\ bg\ bh \\
-		ce\ cf\ de\ df \\
-		cg\ ch\ dg\ dh
-		\end{bmatrix}.$$
+        ag\ ah\ bg\ bh \\
+        ce\ cf\ de\ df \\
+        cg\ ch\ dg\ dh
+        \end{bmatrix}.$$
 
 因此，我们可以使用已知的单量子门来构建双量子门，这样的例子包括：$$H \otimes H$, $X \otimes \boldone$, and $X \otimes Z$$。
 
 虽然两个单量子门的张量积可以定义一个双量子门，但所有的双量子门并非都能由单量子门构建而成，不能由两个单量子门的张量积表示的双量子门叫做纠缠门，CNOT门就是一个纠缠门的例子。
 
-对于CNOT门的认知可以推广到任意的门。一个受控的门一般来说扮演着身份验证的角色除非一个特定的量子比特是$$1$$。我们将应用于量子比特$$x$$上的受控的幺正变换标记为$$\Lambda_x(U)$$，那么对于它有：$$\Lambda_0(U) e_{1}\otimes {\psi}=e_{1}\otimes U{\psi}$$和$$\Lambda_0(U) e_{0}\otimes {\psi}=e_{0}\otimes{\psi}$$，这里的$$e_{0}$$和$$e_{1}$$是量子态为$$0$$和$$1$$对应的单量子态基向量，例如对于下面的受控$$Z$$门，我们可以将其表示为：
+对于CNOT门的认知可以推广到任意的门。一个受控的门一般来说扮演着身份验证的角色除非一个特定的量子比特是$$1$$。我们将应用于量子比特$$x$$上的受控的幺正变换标记为$$\Lambda_x(U)$$，那么对于它有：$$\Lambda_0(U) e_{1}\otimes {\psi}=e_{1}\otimes U{\psi}$$和$$\Lambda_0(U) e_{0}\otimes {\psi}=e_{0}\otimes{\psi}$$，这里的$$e_{0}$$和$$e_{1}$$是量子态为$$0$$和$$1$$对应的单量子态基向量，例如对于下面的受控$$Z$$门，我们可以将其表示为：  
 $$ \Lambda_0(Z)= \begin{bmatrix}1;0;0;0\\0;1;0;0\\0;0;1;0\\0;0;0;-1 \end{bmatrix}=(\boldone\otimes H)\operatorname{CNOT}(\boldone\otimes H).  $$
 
 用有效的方式构建受控的幺正变换是一个主要的挑战，实现这一点的最简单的方法是建立一个基础门操作的受控版本的数据库，并在最初的幺正变换中用受控操作替代对应的基本门操作。但这样做是相当浪费的，有一些灵巧的办法可以只替换某些门操作来达到同样的效果。在微软量子开发框架中，我们提供了原始的、受控的方法，并且也允许用户自定义一个幺正变换的受控版本。
@@ -168,10 +167,10 @@ $$ \Lambda_0(Z)= \begin{bmatrix}1;0;0;0\\0;1;0;0\\0;0;1;0\\0;0;0;-1 \end{bmatrix
 
 #### 多量子系统
 
-我们遵循在双量子系统中探索到的模型来构建多量子系统，多量子系统的状态由较小系统的张量积构建而来。例如，在量子计算机中将字符串“1011001”编码的方式为：
+我们遵循在双量子系统中探索到的模型来构建多量子系统，多量子系统的状态由较小系统的张量积构建而来。例如，在量子计算机中将字符串“1011001”编码的方式为：  
 $$ 1011001 \equiv \begin{bmatrix} 0 \\  1 \end{bmatrix}\otimes \begin{bmatrix} 1 \\  0 \end{bmatrix}\otimes \begin{bmatrix} 0 \\  1 \end{bmatrix}\otimes \begin{bmatrix} 0 \\  1 \end{bmatrix} \otimes \begin{bmatrix} 1 \\  0 \end{bmatrix}\otimes \begin{bmatrix} 1 \\  0 \end{bmatrix}\otimes \begin{bmatrix} 0 \\  1 \end{bmatrix}.  $$
 
-量子门的工作方式与上面相同。例如，我们对多量子系统中的第一个量子比特应用$$X$$门，在第二个和第三个量子比特之间应用CNOT门，那么整个变换可以表示为：
+量子门的工作方式与上面相同。例如，我们对多量子系统中的第一个量子比特应用$$X$$门，在第二个和第三个量子比特之间应用CNOT门，那么整个变换可以表示为：  
 $$\begin{align} (X \otimes \operatorname{CNOT}_{12}\otimes \boldone\otimes \boldone \otimes \boldone) \begin{bmatrix} 0 \\  1 \end{bmatrix}\otimes \begin{bmatrix} 1 \\  0 \end{bmatrix}\otimes \begin{bmatrix} 0 \\  1 \end{bmatrix}\otimes \begin{bmatrix} 0 \\  1 \end{bmatrix} \otimes \begin{bmatrix} 1 \\  0 \end{bmatrix}\otimes \begin{bmatrix} 1 \\  0 \end{bmatrix}\otimes \begin{bmatrix} 0 \\  1 \end{bmatrix}\\ \qquad\qquad\equiv 0011001.  \end{align}$$
 
 在多量子系统中，经常需要分配和释放计算机中临时的量子比特所占用的空间，这些临时的量子变量又叫做“附属（ancilla）”量子。默认情况下，新分配的量子比特都被初始化为$$e_{0}$$状态，我们进一步假定在释放之前，这个量子比特的状态重新回到$$e_{0}$$。这个假定很重要，因为如果一个附属量子在被释放时与其他量子寄存器纠缠，那么对它的释放就会破坏其他量子的状态，因此，我们才认定一个量子比特被释放时要回到最初的状态。
@@ -179,3 +178,4 @@ $$\begin{align} (X \otimes \operatorname{CNOT}_{12}\otimes \boldone\otimes \bold
 最后，对于双量子系统来说，构建一个通用的量子门集合需要想集合中添加新的门，但对多量子系统来说这是不必要的。H、T和CNOT门就构成了多量子系统的一个通用门集合，因为任何一个幺正变换都可以分解为一系列的双量子的旋转。因此当面对多量子系统时，我们可以继续应用双量子系统中的相关理论。
 
 目前我们都是使用线性代数中的符号来描述多量子系统，当时当量子数量增多时，这些表述将会变得非常繁琐，例如对于一个7位长的字符串，其对应的量子态向量的维数就达到了128，因此，接下来我们将引入一个新的符号体系来描述量子系统，其能精确表达量子状态，同时使用起来也非常便捷。
+
