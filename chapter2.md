@@ -636,9 +636,9 @@ using (qubits = Qubit[bits * 2 + 3]) {
 }
 ```
 
-#### 2.4.2 污浊的量子位
+#### 2.4.2 附属量子位
 
-`borrowing`语句用于在代码块中分配临时使用的量子位，用户应保证这些借来的量子位与借来时的状态相同。关于污浊的量子位的用法可以参看这个示例：[_Factoring using 2n+2 qubits with Toffoli based modular multiplication_](https://arxiv.org/abs/1611.07995) 。
+`borrowing`语句用于在代码块中分配临时使用的量子位，用户应保证这些借来的量子位与借来时的状态相同。关于附属的量子位的用法可以参看这个示例：[_Factoring using 2n+2 qubits with Toffoli based modular multiplication_](https://arxiv.org/abs/1611.07995) 。
 
 `borrowing`语句的使用方法如下所示：
 
