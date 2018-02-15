@@ -179,3 +179,62 @@ $$\begin{align} (X \otimes \operatorname{CNOT}_{12}\otimes 1 \otimes 1 \otimes 1
 
 目前我们都是使用线性代数中的符号来描述多量子系统，当时当量子数量增多时，这些表述将会变得非常繁琐，例如对于一个7位长的字符串，其对应的量子态向量的维数就达到了128，因此，接下来我们将引入一个新的符号体系来描述量子系统，其能精确表达量子状态，同时使用起来也非常便捷。
 
+### 狄拉克符号
+
+在线性代数中，列向量符号是无处不在的，但在量子计算中，特别是处理多量子系统时，向量符号就显得笨拙而繁琐。例如，我们定义两个向量$$\psi$$和$$\phi$$，但是我们并不知道它们是列向量还是行向量，也不知道它们的大小分别是多少。除了向量的形态，使用向量符号表示哪怕是非常简单的量子态也是一件繁琐的工作。比如，我们想要表达一个$$n$$量子比特的系统状态，这些量子比特处于$$0$$状态，那么正规的表示形式为：
+$$\begin{bmatrix}1 \\  0 \end{bmatrix}\otimes \cdots \otimes\begin{bmatrix}1 \\  0 \end{bmatrix}. $$
+
+当然，对这个张量积求值是不切实际的，因为向量都位于指数级别增长的空间中，所以这个符号是使用向量符号对量子系统状态进行描述的最好的符号了。
+
+狄拉克符号是一种新的能够满足量子计算精确需求的语言，因此我们建议读者不要把本节中的例子看作是描述量子态的严格公式，而是鼓励读者把这些看作是可以用来简明表达量子思想的建议。
+
+在狄拉克符号中有两种向量：左矢（Bra vector）和右失（ket），之所以这样命名这两种向量，是因为将两个向量放在一起时构成一个“braket”（狄拉克符号也叫braket符号）或内积。如果$$\psi$$是一个列向量，我们可以用狄拉克符号$$|\psi \rangle$$来表示，此处$$|\cdot \rangle$$表示一个单位列向量，比如右失，类似的行向量$$\psi^\dagger$$可以表示为$$\langle \psi |$$，而符号$$\langle \psi |\psi \rangle$$就表示了向量$$\psi$$与其自身的内积，根据定义其值为$$1$$。
+
+更一般的，如果$$\psi$$和$$\phi$$是量子态向量，他们的内积为：$$\langle \phi | \psi \rangle$$，并且测量量子态$$|{\psi}\rangle$$结果为$$|{\phi}\rangle$$的概率为$$|\langle \phi|\psi\rangle|^2$$。
+
+下面所示是量子态$$0$$和$$1$$与狄拉克符号之间的关系：
+$$ \begin{bmatrix} 1 \\  0 \end{bmatrix} = |0\rangle,\qquad \begin{bmatrix} 0 \\  1 \end{bmatrix} = |1\rangle.  $$
+
+下面的符号通常用来描述对$$|0\rangle$$和$$|1\rangle$$应用Hadamard门所产生的状态（对应于布罗兹球面中的$$+x$$和$$-x$$方向）：
+$$ \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\  1 \end{bmatrix}=H|0\rangle = |{+}\rangle,\qquad \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\  -1 \end{bmatrix} =H|1\rangle = |{-}\rangle .  $$
+
+这些状态也可以使用狄拉克符号来表示：
+$$ |+\rangle = \frac{1}{\sqrt{2}}(|0\rangle + |1\rangle),\qquad |-\rangle = \frac{1}{\sqrt{2}}(|0\rangle - |1\rangle).  $$
+
+从上面的关系可以明白为什么这些状态被称为“计算基底”，因为任何一个量子态都能通过这些基底的加和来表示，并且这些加和形式能方便的使用狄拉克符号来表达。上面的转换关系反过来也是成立的，从下面的关系中可以看出，$$|+\rangle$$和$$|-\rangle$$构成了量子太基底。
+
+作为一个使用狄拉克符号的例子，考虑$$0$$和$$1$$的内积，其可以使用狄拉克符号表示为：
+$$ |0\rangle = \frac{1}{\sqrt{2}}(|+\rangle + |-\rangle),\qquad |1\rangle = \frac{1}{\sqrt{2}}(|+\rangle - |-\rangle).  $$
+
+上面的例子说明了$$|0\rangle$$和$$|1\rangle$$是正交向量，即$$\langle 0 |1\rangle = \langle 1 | 0\rangle =0$$，同时，根据定义可以得到：$$\langle 0 | 0 \rangle = \langle 1 | 1\rangle=1$$，说明两个计算基底是标准正交的。在下面的例子中，可以看到标准正交性质的作用，假设存在状态$$|\psi\rangle = {\frac{3}{5}} |1\rangle + {\frac{4}{5}} |0\rangle$$，因为$$\langle 1 | 0\rangle =0$$，测量结果为1的概率为：
+$$\big|\langle 1 | \psi\rangle \big|^2= \left|\frac{3}{5}\langle 1 | 1\rangle +\frac{4}{5}\langle 1 |0 \rangle\right|^2=\frac{9}{25}.$$
+
+狄拉克符号还包含一个隐式的张量积结构。这是非常重要的，因为在量子计算中，使用两个不相关的量子寄存器描述的量子态向量是这两个不相关量子态的张量积。如果你想解释量子计算，那么能够简明描述张量积结构是非常重要的，狄拉克符号体系中，两个向量$$\psi$$和$$\phi$$的张量积$$\psi \otimes \phi$$可以写为$$|\psi\rangle |\phi\rangle$$，有时也写作：$$|\psi\rangle \otimes |\phi\rangle$$，例如：
+$$ \begin{bmatrix} 1 \\  0 \\  0 \\  0 \end{bmatrix}= \begin{bmatrix} 1 \\  0 \end{bmatrix} \otimes \begin{bmatrix} 1 \\  0 \end{bmatrix} = |0\rangle \otimes |0\rangle= |0\rangle |0\rangle.  $$
+
+类似地，状态$$|p \rangle$$表示一个使用整数$$p$$的二进制编码表示的量子态，例如，我们想使用二进制编码来表示整数5，那么下面的这几个表示是等同的：
+$$ |{1}\rangle|{0}\rangle|{1}\rangle = |{101}\rangle = |{5}\rangle.  $$
+
+在上面的等式中，$$|0\rangle$$不必是一个量子比特，而是一个存储了状态为$$0$$的量子比特的寄存器，这之间的区别可以根据上下文的环境很容易判断出来，同时，这种转换在简化某些表达上是很有用处的，例如本节中的第一个例子就可以写作：
+$$ \begin{bmatrix}1 \\  0 \end{bmatrix}\otimes \cdots \otimes\begin{bmatrix}1 \\  0 \end{bmatrix} = |0\rangle \otimes \cdots \otimes |0\rangle= |0\cdots 0\rangle = |0\rangle^{\otimes n} = |0\rangle.  $$
+
+另一个使用狄拉克符号来表示量子态的例子如下所示，在每一个长度为$$n$$的位串上写一个相等的叠加态：
+$$H^{\otimes n} |{0}\rangle = \frac{1}{2^{n/2}} \sum_{j=0}^{2^n-1} |{j}\rangle=|+\rangle^{\otimes n}.$$
+
+这里你可能会想知道为什么对于$$n$$个比特，加和的范围是$$0$$到$$2^{n}-1$$。首先，注意对n个比特，可能的构型有$$2^{n}$$种，因为每个比特都有两个可选的值。同时要说明的是，在这个例子中，我们没有想$$|0\rangle^{\otimes n} = |0\rangle$$一样将$$|+\rangle^{\otimes n}$$简化为$$|+\rangle^{\otimes n}=|+\rangle$$，因为这个转换惯例通常是保留给每个初始状态为$$0$$的计算基底的，虽然$$|+\rangle^{\otimes n}=|+\rangle$$这样表达也是有意义的，但是并没有被引入量子计算的书面表达中。
+
+除了简明的优点，狄拉克符号的另一个有点就是其是线性的。例如，对于下面向量的张量积，我们可以写为：
+$$(\alpha |\psi\rangle +\beta|\phi\rangle)\otimes (\gamma |\chi\rangle + \delta |\omega\rangle)= \alpha\gamma |\psi\rangle|\chi\rangle + \alpha\delta |\psi\rangle|\omega\rangle+\beta\gamma|\phi\rangle|\chi\rangle+\beta\omega|\phi\rangle|\omega\rangle.$$
+
+从上面的例子可以看出，将张量积用狄拉克符号表示时，就像是普通的乘法一样简单明了。
+
+左失遵循与右失类似的惯例。例如，向量$$\langle\psi|\langle \phi|$$与状态向量$$\psi^\dagger \otimes \phi^\dagger=(\psi\otimes \phi)^\dagger$$相等。如果右失$$|\psi\rangle$$是$$\alpha |0\rangle + \beta |1\rangle$$，那么对应的左失就是$$\langle{\psi}|=|\psi\rangle^\dagger = (\langle 0|\alpha^* +\langle 1 |\beta^*)$$。举一个例子，假设我们要计算使用一个量子测量程序测量$$|\psi\rangle = \frac{3}{5} |1\rangle + \frac{4}{5} |0\rangle$$的状态为$$|+\rangle$$或$$|-\rangle$$的概率，那么所得的概率为：
+$$|\langle - |\psi\rangle|^2= \left|\frac{1}{\sqrt{2}}(\langle 0| - \langle 1|)(\frac{3}{5} |1\rangle + \frac{4}{5} |0\rangle) \right|^2=\left|-\frac{3}{5\sqrt{2}} + \frac{4}{5\sqrt{2}}\right|^2=\frac{1}{50}.$$
+
+在概率计算中出现负号是量子干涉的一种表现形式，量子干涉也是量子计算之所以优于传统计算的机制之一。
+
+狄拉克符号体系中，最后一项值得被讨论的优点是*ketbra*，也就是外积。用狄拉克符号表示外积的形式为$$|\psi\rangle \langle \phi|$$，它也被叫做*ketbra*，因为可以看到它与内积*braket*中的符号是相反的。对于两个量子态向量$$\psi$$和$$\phi$$，它们的外积是通过矩阵乘法定义的：$$|\psi\rangle \langle \phi| = \psi \phi^\dagger$$，一个很简单的关于外积的例子如下所示:
+$$|0\rangle \langle 0| = \begin{bmatrix}1\\ 0 \end{bmatrix}\begin{bmatrix}1&0 \end{bmatrix}= \begin{bmatrix}1 &0\\ 0 &0\end{bmatrix} \qquad |1\rangle \langle 1| = \begin{bmatrix}0\\ 1 \end{bmatrix}\begin{bmatrix}0&1 \end{bmatrix}= \begin{bmatrix}0 &0\\ 0 &1\end{bmatrix}.$$
+
+
+
