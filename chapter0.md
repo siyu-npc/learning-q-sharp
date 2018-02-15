@@ -236,5 +236,26 @@ $$|\langle - |\psi\rangle|^2= \left|\frac{1}{\sqrt{2}}(\langle 0| - \langle 1|)(
 狄拉克符号体系中，最后一项值得被讨论的优点是*ketbra*，也就是外积。用狄拉克符号表示外积的形式为$$|\psi\rangle \langle \phi|$$，它也被叫做*ketbra*，因为可以看到它与内积*braket*中的符号是相反的。对于两个量子态向量$$\psi$$和$$\phi$$，它们的外积是通过矩阵乘法定义的：$$|\psi\rangle \langle \phi| = \psi \phi^\dagger$$，一个很简单的关于外积的例子如下所示:
 $$|0\rangle \langle 0| = \begin{bmatrix}1\\ 0 \end{bmatrix}\begin{bmatrix}1&0 \end{bmatrix}= \begin{bmatrix}1 &0\\ 0 &0\end{bmatrix} \qquad |1\rangle \langle 1| = \begin{bmatrix}0\\ 1 \end{bmatrix}\begin{bmatrix}0&1 \end{bmatrix}= \begin{bmatrix}0 &0\\ 0 &1\end{bmatrix}.$$
 
+外积也被称为投影，因为他们将一个量子态向量投影到了一个固定值上。因为这些操作不是幺正的（也不会保持一个向量的范数），那么毫无疑问，量子计算机不能确定地进行投影操作，然而，投影能很好地描述测量操作对量子比特的作用，例如我们测量一个状态为$$\psi$$的量子得到的结果为$$0$$，那么作为测量结果的状态所经历的变换为：
+$$|\psi \rangle \rightarrow \frac{(|0\rangle \langle 0|)|\psi\rangle}{|\langle 0|\psi\rangle|}= |0\rangle,$$
 
+上面的结果是测量一个量子所得结果为$$|0\rangle$$的期望。重申一下，这样的投影不能确定地作用在量子计算机中，相反，他们至多以一定的概率随机与量子态$$|0\rangle$$发生作用。这种测量结果的概率可以写成量子态中量子投影的期望值：
+$$\langle \psi| (|0\rangle \langle 0|)|\psi\rangle = |\langle \psi|0\rangle|^2,$$
+这也说明了投影给出了一个新的测量量子状态的方法。
 
+假设我们想要测量一个多量子系统中第一个量子比特的状态，那么可以只用投影和狄拉克符号方便地表示为：
+$$P(\text{first qubit = 1})= \langle\psi|\left(|1\rangle\langle{1}|\otimes \boldone^{\otimes n-1}\right) |\psi\rangle.$$
+
+这里的单位矩阵可以使用狄拉克符号表示为：
+$$\boldone = |0\rangle \langle 0|+|1\rangle \langle 1|= \begin{bmatrix}1&0\\ 0&1 \end{bmatrix}.$$
+
+对于双量子系统，投影可以被扩展为：
+$$|1\rangle \langle 1| \otimes \mathbb{1} = |1\rangle\langle 1 \otimes (|0\rangle \langle 0|+|1\rangle \langle 1|)= |10\rangle\langle 10| + |11\rangle\langle 11|.$$
+
+我们可以看出这与我们对使用列向量符号描述多量子系统状态测量结果的可能性的讨论是一致的：
+$$P(\text{first qubit = 1})= \psi^\dagger (e_{10}e_{10}^\dagger + e_{11}e_{11}^\dagger)\psi = |e_{10}^\dagger \psi|^2 + |e_{11}^\dagger \psi|^2,$$
+上面的式子与多量子状态测量的探讨结果是一致的。然而，对于多量子系统，上述结果的推广使用狄拉克符号表示比使用列向量符号更直接。
+
+在狄拉克符号体系中，其他有用的操作符还有状态操作符。对于一个量子态向量来说，状态操作符的形式为：$$\rho = |\psi\rangle \langle \psi|$$，这个将量子态描述为矩阵而非向量的方法是很方便的，因为它给出了一个简便的表示概率计算的方法，同时也允许我们使用相同的形式既可以表示统计学上的不确定性，也可以表达量子的不确定性。通用的量子操作符（非向量）在量子计算的某些领域中是普遍存在的，但理解该领域的基础知识并不是必须的，对于感兴趣的读者可以在[这里](https://docs.microsoft.com/en-us/quantum/quantum-formoreinfo?view=qsharp-preview)找到更多信息。
+
+在本文开始时，量子态是量子计算中的基本对象，但是Q#中并没有直接表示量子态的符号，相反，所有的状态都通过对量子比特的筹备操作来描述。前面的例子对此是一个很好的说明，对于在寄存器中的每一个量子位串，表达对它们进行平均叠加操作，我们可以将结果表述为：$$H^{\otimes n} |{0}\rangle$$，这个简短的指数式表达不仅使我们可以方便的解释它，同时它也定义了实现一个算法需要的通过软件栈来传播的操作。因此，Q#被设计为触发量子门序列而不是量子态，当然，理论层面上来讲，它们是等价的。
