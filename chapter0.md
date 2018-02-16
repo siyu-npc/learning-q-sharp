@@ -242,13 +242,13 @@ $$\langle \psi| (|0\rangle \langle 0|)|\psi\rangle = |\langle \psi|0\rangle|^2,$
 这也说明了投影给出了一个新的测量量子状态的方法。
 
 假设我们想要测量一个多量子系统中第一个量子比特的状态，那么可以只用投影和狄拉克符号方便地表示为：
-$$P(\text{first qubit = 1})= \langle\psi|\left(|1\rangle\langle{1}|\otimes \boldone^{\otimes n-1}\right) |\psi\rangle.$$
+$$P(\text{first qubit = 1})= \langle\psi|\left(|1\rangle\langle{1}|\otimes \mathbf{1}^{\otimes n-1}\right) |\psi\rangle.$$
 
 这里的单位矩阵可以使用狄拉克符号表示为：
-$$\boldone = |0\rangle \langle 0|+|1\rangle \langle 1|= \begin{bmatrix}1&0\\ 0&1 \end{bmatrix}.$$
+$$\mathbf{1}= |0\rangle \langle 0|+|1\rangle \langle 1|= \begin{bmatrix}1&0\\ 0&1 \end{bmatrix}.$$
 
 对于双量子系统，投影可以被扩展为：
-$$|1\rangle \langle 1| \otimes \mathbb{1} = |1\rangle\langle 1 \otimes (|0\rangle \langle 0|+|1\rangle \langle 1|)= |10\rangle\langle 10| + |11\rangle\langle 11|.$$
+$$|1\rangle \langle 1| \otimes \mathbf{1} = |1\rangle\langle 1 \otimes (|0\rangle \langle 0|+|1\rangle \langle 1|)= |10\rangle\langle 10| + |11\rangle\langle 11|.$$
 
 可以看出这与我们对使用列向量符号描述多量子系统状态测量结果的可能性的讨论是一致的：
 $$P(\text{first qubit = 1})= \psi^\dagger (e_{10}e_{10}^\dagger + e_{11}e_{11}^\dagger)\psi = |e_{10}^\dagger \psi|^2 + |e_{11}^\dagger \psi|^2,$$
@@ -273,7 +273,7 @@ Pauli-Z矩阵有两个特征向量$$|0\rangle$$和$$|1\rangle$$分别对应特�
 $$
 \begin{array}{|c|c|}
 \text{Pauli Measurement} ; U\\ 
-Z ; \boldone\\ 
+Z ; \mathbf{1}\\ 
 X ; H\\ 
 Y ; HS^\dagger\\ 
 \end{array}
@@ -295,3 +295,54 @@ $$
 $$
 Z\otimes\mathbf{1}=\begin{bmatrix} 1;0;0;0\\  0;1;0;0\\  0;0;-1;0\\ 0;0;0;-1\end{bmatrix}.
 $$
+在之前，任意一个该矩阵的幺正变换也都描述了一个特征值为$$\pm 1$$的两个半空间。类似于单量子系统，对于$$4 \times 4$$大小的幺正矩阵，所有双量子泡利测量都能被写成$$U^\dagger (Z\otimes \mathbf{1}) U$$的形式。在下面的列表中，我们列举了为了方便交换门而引入的变换，所谓交换门就是交换量子$$1$$和量子$$0$$的一种操作门：$$\operatorname{SWAP}=\operatorname{CNOT}_{01}\operatorname{CNOT}_{10}\operatorname{CNOT}_{01}$$
+$$
+\begin{array}{|c|c|}
+\text{Pauli Measurement} ; U\\ 
+\hline
+Z\otimes \mathbf{1} ; \mathbf{1}\otimes \mathbf{1}\\ 
+X\otimes \mathbf{1} ; H\otimes \mathbf{1}\\ 
+Y\otimes \mathbf{1} ; HS^\dagger\otimes \mathbf{1}\\ 
+\mathbf{1} \otimes Z ; \operatorname{SWAP}\\ 
+\mathbf{1} \otimes X ; (H\otimes \mathbf{1})\operatorname{SWAP}\\ 
+\mathbf{1} \otimes Y ; (HS^\dagger\otimes \mathbf{1})\operatorname{SWAP}\\ 
+Z\otimes Z ; \operatorname{CNOT}_{10}\\ 
+X\otimes Z ; \operatorname{CNOT}_{10}(H\otimes \mathbf{1})\\ 
+Y\otimes Z ; \operatorname{CNOT}_{10}(HS^\dagger\otimes \mathbf{1})\\ 
+Z\otimes X ; \operatorname{CNOT}_{10}(\mathbf{1}\otimes H)\\ 
+X\otimes X ; \operatorname{CNOT}_{10}(H\otimes H)\\ 
+Y\otimes X ; \operatorname{CNOT}_{10}(HS^\dagger\otimes H)\\ 
+Z\otimes Y ; \operatorname{CNOT}_{10}(\mathbf{1} \otimes HS^\dagger)\\ 
+X\otimes Y ; \operatorname{CNOT}_{10}(H\otimes HS^\dagger)\\ 
+Y\otimes Y ; \operatorname{CNOT}_{10}(HS^\dagger\otimes HS^\dagger)\\ 
+\end{array}
+$$
+
+额外需要注意的是，我们可能会将测量$$Z\otimes Z$$与先测量$$Z \otimes \mathbf{1}$$然后再测量$$mathbf{1} \otimes Z$$看做是相同的，而实际上这并不一定是正确的。原因在于测量$$Z \otimes Z$$将量子态映射到特征值为$$+1$$或$$-1$$的特征空间中，而先测量$$Z \otimes \mathbf{1}$$将量子态先映射到$$Z \otimes \mathbf{1}$$对应的半空间中，然后测量$$mathbf{1} \otimes Z$$又将量子态映射到$$\mathbf{1} \otimes Z$$所对应的半空间中。执行这两个计算时有四个计算基底向量，导致量子态会被映射如四分之一空间中，这与直接测量$$Z \otimes Z$$是不对应的。
+
+另一种理解泡利测量张量积（比如$$X \otimes X$$或者$$Z \otimes Z$$)在于，这些测量能让你看到存储在两个量子联系中的信息。测量$$X \otimes \mathbf{1}$$能让你看到局部地存储在第一个量子中的信息。虽然这些测量方法在量子计算中有同样的价值，但前一个体现了量子计算的能力，它揭示了在量子计算中，你想要了解的信息往往不会仅存储在单一的量子比特中，而是同时非局部地存储在所有量子中，并且只有通过与$$Z \otimes Z$$联合测量，这些信息才会显现。
+
+任意的泡利测量符都能被测量，例如$$X \otimes Y \otimes Z \otimes \mathbf{1}$$。所有泡利操作符的张量积都只有两个特征值$$\pm 1$$，两个特征空间也构成了整个向量空间的半空间。
+
+在Q#中，如果测量在$$(-1)^j$$所对应的特征空间产生了结果，那么测量的输出就为$$j$$。因为测量泡利操作符需要一个很长的受控的非门组成的测量链，并且描述对角化的$$U$$门的变换需要将其表达为$$Z$$和$$\mathbf{1}$$的张量积，因此这个特性是很有帮助的，Q#会帮你解决所有的基础变换。
+
+#### 不可克隆定理
+
+量子计算有着强大的能力，它能是我们解决想大数因式分解这样的难题，以及高效地模拟相关电子系统。然而，它的能力在某些情况下也会收到限制，其中之一便是不可克隆定理。
+
+如其名字所示，不可克隆定理指的是不能够克隆量子计算机的通用量子态。这个原理的证明是非常直观明了的，在这里我们以没有附属量子的量子计算机为例对其进行说明。对于这样一个量子计算机，我们禁止测量操作，因为这会破坏我们需要克隆的量子态，克隆操作一定是一个幺正矩阵，且对于任何量子太$$\psi$$，这个矩阵有如下性质：
+$$
+U|\psi\rangle|0\rangle=|\psi\rangle|\psi\rangle,
+$$
+
+根据矩阵乘法的线性性质，可以推断出对于任何量子次二态$$|\phi\rangle$$，有如下性质：
+$$\begin{align}
+;U\left[\frac{1}{\sqrt{2}}\left(|\phi\rangle+|\psi\rangle \right)\right]=\frac{1}{\sqrt{2}}\left(|\phi\rangle|\phi\rangle+|\psi\rangle|\psi\rangle\right)\\
+		;\qquad\qquad\ne \left(\frac{1}{\sqrt{2}}\left(|\phi\rangle+|\psi\rangle \right)\right)\otimes\left(\frac{1}{\sqrt{2}}\left(|\phi\rangle+|\psi\rangle \right)\right).
+		\end{align}$$
+
+这给出了不可克隆原理背后的基本认识：任何复制未知状态量子态的设备都会对其所复制的量子产生一些影响。对于完整的证明，请参考[这个网址](https://docs.microsoft.com/en-us/quantum/quantum-formoreinfo?view=qsharp-preview)。
+
+不可克隆原理对于定性地理解量子计算是很重要的，如果你能够毫不费力地克隆量子态，那么你将获得从量子态中学习的近乎神奇的能力，但这样的话，就违背了海森堡的不确定性原理，或者你可以使用一个优化的克隆方法从复杂的量子分布中获得一个单独的采样，并从这个单独的采样中对这个量子系统分布进行所有可能的了解，这就类似于你抛出一个硬币，并观察正面，然后告诉你的朋友结果并让你的朋友做出“硬币一定符合伯努利分布并且$$p = 0.512643$$，这个结果意义并不大，因为对于多比特的系统而言，仅仅一个比特所能提供的信息在没有实质性的先验信息之前，远远不能给出多比特系统的信息。简单地说，没有先验信息，我们就不能完美地克隆一个量子态。
+
+量子计算中，信息不是免费的，每一个被测量的量子给出了单个比特的信息，而不可克隆定理表明，没有后门能绕过系统信息获取和因而产生的干扰这两个之间的矛盾。
