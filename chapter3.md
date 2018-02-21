@@ -34,7 +34,7 @@
 
 #### 构建目标机器
 
-Q#中的量子机器是一个常规的.NET类型的实例，它们通过自身的构造函数进行创建以及初始化。一些模拟器包括`QuantumSimulator`应用了.NET的`IDissposable`接口，因此需要使用`using`语句进行声明。
+Q#中的量子机器是一个常规的.NET类型的实例，它们通过自身的构造函数进行创建以及初始化。一些模拟器包括`QuantumSimulator`实现了.NET的`IDisposable`接口，因此需要使用`using`语句进行声明。
 
 #### 计算量子算法所需要的参数
 
@@ -93,5 +93,39 @@ catch (AggregateException e)
 	}
 }
 ```
+
+### 量子计算机模拟器
+
+微软量子开发包提供了一个全状态的量子计算机模拟器，使用它你可以在自己的计算机上运行和调试使用Q#语言开发的程序。
+
+该模拟器通过类`QuantumSimulator`引入，使用模拟器时，只需要定义一个该类的实例并将这个实例传入`Run`方法的第一个参数中即可，如下代码所示：
+
+```
+using (var sim = new QuantumSimulator())
+{
+	var res = myOperation.Run(sim).Result;
+	///...
+}
+```
+
+#### IDisposable
+
+类`QuantumSimulator`实现了接口`IDissposable`接口，因此一个`QuantumSimulator`的实例不再被使用时，应调用方法`Dispose`。使用`QuantumSimulator`最好的方法是使用`using`语句，就像上面的例子中那样，这样可以不用显式调用`Dispose`方法，也减少了出错的概率。
+
+#### Seed
+
+类`QuantumSimulator`使用了一个随机数生成器来模拟量子力学中的随机性。为了方便调试，有时候需要得到一个确定的结果，此时可以通过向`QuantumSimulator`的构造函数中传入一个seed来实现，这个seed传给了参数`randomNumberGeneratorSeed`：
+
+```
+using (var sim = new QuantumSimulator(randomNumberGeneratorSeed: 42))
+{
+	var res = myOperationTest.Run(sim).Result;
+	///...
+}
+```
+
+#### Thread
+
+类`QuantumSimulator`使用[OpenMP](http://www.openmp.org/)实现所需要的线性代数的并行计算。默认情况下，OpenMP使用所有能用的硬件线程来进行计算，这也意味着有着较少数量量子比特的程序运行起来会比较慢，因为所需要的协调工作相比真正的工作占据了大部分资源。这个问题可以通过将环境变量`OPM_NUM_THREADS`设置为一个较小的数字来解决。一个常用的策略是，1个线程对应至多4个量子比特是较好的，然后每增加一个量子比特，就增加一个线程，当然了，你也可以根据自己的算法进行更好地调整。
 
 
