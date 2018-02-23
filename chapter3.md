@@ -129,3 +129,214 @@ using (var sim = new QuantumSimulator(randomNumberGeneratorSeed: 42))
 类`QuantumSimulator`使用[OpenMP](http://www.openmp.org/)实现所需要的线性代数的并行计算。默认情况下，OpenMP使用所有能用的硬件线程来进行计算，这也意味着有着较少数量量子比特的程序运行起来会比较慢，因为所需要的协调工作相比真正的工作占据了大部分资源。这个问题可以通过将环境变量`OPM_NUM_THREADS`设置为一个较小的数字来解决。一个常用的策略是，1个线程对应至多4个量子比特是较好的，然后每增加一个量子比特，就增加一个线程，当然了，你也可以根据自己的算法进行更好地调整。
 
 
+### 量子轨迹模拟器
+
+微软量子轨迹模拟器并不是靠真实地模拟量子计算机的状态来运行程序，因此轨迹模拟器可以运行一个使用了成百上千个量子比特的量子程序。这一点有两个好处：
+1. 方便调试量子程序中的经典代码
+2. 方便估算在量子计算机上运行一个量子程序所需要的资源
+
+#### 提供测量输出结果的概率
+
+在量子算法中主要有两种测量，第一类通常其辅助作用，这样的情况通常是用户知道测量输出结果的概率，此时用户可以使用`Microsoft.Quantum.Primitive`命名空间中的`AssertProb`来表达这一信息，如下所示：
+
+```
+operation Teleportation (source : Qubit, target : Qubit) : () {
+	body {
+		using (ancillaRegister = Qubit[1]) {
+			let ancilla = ancillaRegister[0];
+
+			H(ancilla);
+			CNOT(ancilla, target);
+
+			CNOT(source, ancilla);
+			H(source);
+
+			AssertProb([PauliZ], [source], Zero, 0.5, "Outcomes must be equally likely", 1e-5);
+			AssertProb([PauliZ], [ancilla], Zero, 0.5, "Outcomes must be equally likely", 1e-5);
+
+			if (M(source) == One)  { Z(target); X(source); }
+			if (M(ancilla) == One) { X(target); X(ancilla); }
+		}
+	}
+}
+```
+
+当轨迹模拟器运行`AssertProb`时，它将记录在`source`和`ancilla`上测量`PauliZ`得到`Zero`结果的概率为$$0.5$$，在这之后，当模拟器运行`M`时，它就会查询所记录的输出概率，并且`M`返回`Zero`和`One`的概率为$$0.5$$。当同样的代码在一个跟踪着相同量子状态的模拟器中运行时，这个模拟器会检查`AssertProb`中提供的概率是否正确。
+
+#### 使用量子轨迹模拟器运行程序
+
+量子轨迹模拟器可以被视为另一种目标机器，在这上面所使用的C#驱动程序与其他模拟器类似，如下所示：
+
+```
+using Microsoft.Quantum.Simulation.Core;
+using Microsoft.Quantum.Simulation.Simulators;
+using Microsoft.Quantum.Simulation.Simulators.QCTraceSimulators;
+
+namespace Quantum.MyProgram
+{
+	class Driver
+	{
+		static void Main(string[] args)
+		{
+			QCTraceSimulator sim = new QCTraceSimulator();
+			var res = MyQuantumProgram.Run().Result;
+			System.Console.WriteLine("Press any key to continue...");
+			System.Console.ReadKey();
+		}
+	}
+}
+```
+
+注意，如果代码中有至少一个测量没有使用`AssertProb`或`ForceMeasure`标记，模拟器将会抛出`UnconstrainMeasurementException`异常。
+
+除了运行量子程序，轨迹模拟器还有5个组件用于检测程序中的bug和进行量子程序资源估算，它们是：
+- 明确的输入检查器（Distinct Inputs Checker）
+- 非法的量子比特使用检查器（Invalidated Qubits Use Checker）
+- 基本操作计数器（Primitive Operations Counter）
+- 量子线路深度计数器（Circuit Depth Counter）
+- 量子线路宽度计数器（Circuit Width Counter）
+
+每一个组件都可以在`QCTraceSimulatorConfiguration`中设置合适的标志进行激活。下面的部分我们将对这些部分进行详细介绍。
+
+#### 明确的输入检查器
+
+`Distinct Inputs Checker`是轨迹模拟器的一部分，它用来检测代码中可能存在的bug。考虑以下Q#代码：
+```
+operation DoBoth( q1 : Qubit, q2 : Qubit, op1 : (Qubit=>()), op2 : (Qubit=>()) ) : () {
+	body {
+		op1(q1);
+		op2(q2);
+	}
+}
+```
+
+当用户看到这段代码时，他们会假定参数中的`op1`和`op2`被调用的顺序是没有影响的，因为`q1`和`q2`是两个不同的量子比特，并且作用于不同量子比特上的操作也是明确的。现在来看下面的例子，例子中使用了上面定义的操作：
+```
+operation DisctinctQubitCaptured2Test () : () {
+	body {
+		using( q = Qubit[3] ) {
+			let op1 = CNOT(_,q[1]);
+			let op2 = CNOT(q[1],_);
+			DoBoth( q[0],q[2],op1,op2);
+		}
+	}
+}
+```
+
+现在`op1`和`op2`都通过局部应用来获取，并且共享一个量子比特，当用户调用`DoBoth`时，运行结果将依赖于`op1`和`op2`在`DoBoth`中出现的顺序，这绝对不会是用户希望发生的。`Distinct Inputs Checker`能够检测这样的情况并抛出`DisctinctInputsCheckerException`。
+
+##### 在C#程序中使用`Distinct Inputs Checker`
+
+下面的代码展示了如何在C#代码中使用配置了`Distinct Inputs Checker`的轨迹模拟器。
+```
+using Microsoft.Quantum.Simulation.Core;
+using Microsoft.Quantum.Simulation.Simulators;
+using Microsoft.Quantum.Simulation.Simulators.QCTraceSimulators;
+
+namespace Quantum.MyProgram
+{
+	class Driver
+	{
+		static void Main(string[] args)
+		{
+			var traceSimCfg = new QCTraceSimulatorConfiguration();
+			traceSimCfg.useDistinctInputsChecker = true; //enables distinct inputs checker
+			QCTraceSimulator sim = new QCTraceSimulator(traceSimCfg);
+			var res = MyQuantumProgram.Run().Result;
+			System.Console.WriteLine("Press any key to continue...");
+			System.Console.ReadKey();
+		}
+	}
+}
+```
+
+上面的代码中，类`QCTraceSimulatorConfiguration`存储轨迹模拟器的配置，并且能够作为`QCTraceSimulator`构造函数的参数。当`useDistinctInputsChecker`被置为`true`时，`Distinct Inputs Checker`将被激活。
+
+##### 非法量子比特使用检测器
+
+`Invalidated Qubits Use Checker`是轨迹模拟器的一部分，它被用来检测代码中潜在的bug。考虑下面的Q#代码：
+```
+operation UseReleasedQubitTest () : () {
+	body {
+		mutable q = new Qubit[1];
+		using( ans = Qubit[1] ) {
+			set q[0]= ans[0];
+		}
+		H(q[0]);
+	}
+}
+```
+
+在上面的代码中，当`H`被应用到`q[0]`时，它指向了一个已经被释放的量子比特，这将导致未定义行为。当`Invalidated Qubits Use Checker`被激活时，它将抛出`InvalidatedQubitsUseCheckerException`异常。
+
+##### 在C#程序中使用`Invalidated Qubits Use Checker`
+
+下面的代码展示了如何在C#程序中使用配置了`Invalidated Qubits Use Checker`的轨迹模拟器。
+
+```
+using Microsoft.Quantum.Simulation.Core;
+using Microsoft.Quantum.Simulation.Simulators;
+using Microsoft.Quantum.Simulation.Simulators.QCTraceSimulators;
+
+namespace Quantum.MyProgram
+{
+	class Driver
+	{
+		static void Main(string[] args)
+		{
+			var traceSimCfg = new QCTraceSimulatorConfiguration();
+			traceSimCfg.useInvalidatedQubitsUseChecker = true; // enables useInvalidatedQubitsUseChecker
+			QCTraceSimulator sim = new QCTraceSimulator(traceSimCfg);
+			var res = MyQuantumProgram.Run().Result;
+			System.Console.WriteLine("Press any key to continue...");
+			System.Console.ReadKey();
+		}
+	}
+}
+```
+
+上面的代码中，类`QCTraceSimulatorConfiguration`存储轨迹模拟器的配置，并且能够作为`QCTraceSimulator`构造函数的参数。当`useInvalidatedQubitsUseChecker`被置为`true`时，`Invalidated Qubits Use Checker`将被激活。
+
+##### 基本操作计数器（Primitive Operations Counter)
+
+`Primitive Operations Counter`是轨迹模拟器的一部分。它对量子程序中每一个`operation`执行的基本操作进行计数，统计的结果被保存在一个操作调用图的边缘上。现在让我们来看看使用一个`CCNOT`操作需要多少的`T`门。我们首先定义一个名为`CCNOTDriver`的操作：
+```
+open Microsoft.Quantum.Primitive;
+operation CCNOTDriver() : () {
+	body {
+		using( qubits = Qubit[3] ) {
+			CCNOT(qubits[0],qubits[1],qubits[2]);
+			T(qubits[0]);
+		} 
+	}
+}
+```
+
+为了计算`CCNOT`操作和`CCNOTDriver`操作中到底需要多少个`T`门，我们使用下面的C#代码：
+```
+// using Microsoft.Quantum.Simulation.Simulators.QCTraceSimulators;
+// using System.Diagnostics;
+var config = new QCTraceSimulatorConfiguration();
+config.usePrimitiveOperationsCounter = true;
+var sim = new QCTraceSimulator(config);
+var res = CCNOTDriver.Run(sim).Result;
+
+double tCountAll = sim.GetMetric<CCNOTDriver>(PrimitiveOperationsGroupsNames.T);
+double tCount = sim.GetMetric<Primitive.CCNOT, CCNOTDriver>(PrimitiveOperationsGroupsNames.T);
+```
+
+上面代码中，第一部分运行`CCNOTDriver`，第二部分我们使用`QCTraceSimulator.GetMetric`方法来获得`CCNOTDriver`中运行`T`门的次数。上面程序的输出结果为`CCNOT`执行了7此`T`门，而`CCNOTDriver`执行了8此`T`门。
+
+当使用两个类型参数来调用`GetMetric`时，它返回与给定调用图边缘相关联的数值，在上面的例子中，`Primitive.CCNOT`在`CCNOTDriver`中被调用，因此调用图中包含边缘`<Primitive.CCNOT, CCNOTDriver>`。
+
+如果要获取`CNOT`门被使用的次数，那么我们可以使用以下代码：
+```
+double cxCount = sim.GetMetric<Primitive.CCNOT, CCNOTDriver>(PrimitiveOperationsGroupsNames.CX);
+```
+
+最后，我们可以使用以下代码将所有的统计结果输出为CSV格式：
+```
+double cxCount = sim.GetMetric<Primitive.CCNOT, CCNOTDriver>(PrimitiveOperationsGroupsNames.CX);
+```
+
+
