@@ -339,4 +339,83 @@ double cxCount = sim.GetMetric<Primitive.CCNOT, CCNOTDriver>(PrimitiveOperations
 double cxCount = sim.GetMetric<Primitive.CCNOT, CCNOTDriver>(PrimitiveOperationsGroupsNames.CX);
 ```
 
+##### 深度计数器（Depth Counter）
 
+深度计数器是轨迹模拟器的一部分，它用来采集量子程序中调用的每一个操作的深度。默认情况下，`T`门的深度为1，其他所有门的深度为0，这也意味着默认情况下只有`T`门的深度才会被计算，同时用户也可以自行设定每一个基本操作的深度。下面的Q#和C#代码用来演示深度计数器。
+
+```
+open Microsoft.Quantum.Primitive;
+operation CCNOTDriver() : () {
+	body {
+		using( qubits = Qubit[3] ) {
+			CCNOT(qubits[0],qubits[1],qubits[2]);
+			T(qubits[0]);
+		} 
+	}
+}
+```
+
+下面是相应的C#驱动代码：
+```
+using Microsoft.Quantum.Simulation.Simulators.QCTraceSimulators;
+using System.Diagnostics;
+var config = new QCTraceSimulatorConfiguration();
+config.useDepthCounter = true;
+var sim = new QCTraceSimulator(config);
+var res = CCNOTDriver.Run(sim).Result;
+
+double tDepth = sim.GetMetric<Primitive.CCNOT, CCNOTDriver>(DepthCounter.Metrics.Depth);
+double tDepthAll = sim.GetMetric<CCNOTDriver>(DepthCounter.Metrics.Depth);
+```
+
+上面程序中第一部分运行了`CCNOTDriver`操作，第二部分我们使用`QCTraceSimulator.GetMetric`方法来获取`CCNOT`和`CCNOTDriver`中`T`的深度：
+```
+double tDepth = sim.GetMetric<Primitive.CCNOT, CCNOTDriver>(DepthCounter.Metrics.Depth);
+double tDepthAll = sim.GetMetric<CCNOTDriver>(DepthCounter.Metrics.Depth);
+```
+
+最后，我们可以使用下面的代码将`Depth Counter`采集的数据用CSV的格式输出：
+```
+string csvSummary = sim.ToCSV()[MetricCalculatorsNames.depthCounter];
+```
+
+##### 宽度计数器（Width Counter）
+
+宽度计数器对每个操作中分配的和借用的量子比特进行计数，一些操作还会分配额外的量子比特，例如受控的`X`门和受控的`T`门。下面我们来统计实现一个多量子受控`X`门所需要额外分配的量子比特的数目。
+
+```
+open Microsoft.Quantum.Primitive;
+operation MultiControlledXDriver( numberOfQubits : Int ) : () {
+	body {
+		using( qubits = Qubit[numberOfQubits] ) {
+			(Controlled X)(qubits[ 1 .. numberOfQubits - 1] ,qubits[0]);
+		} 
+	}
+}
+```
+
+下面是用来进行量子比特数量统计的C#代码，它展示了一个作用域5个量子比特的多量子受控`X`门还需要分配2个辅助量子比特，并且它的输入宽度为5.
+
+```
+var config = new QCTraceSimulatorConfiguration();
+config.useWidthCounter = true;
+var sim = new QCTraceSimulator(config);
+int totalNumberOfQubits = 5;
+var res = MultiControlledXDriver.Run(sim, totalNumberOfQubits).Result;
+
+double allocatedQubits = 
+sim.GetMetric<Primitive.X, MultiControlledXDriver>(
+		WidthCounter.Metrics.ExtraWidth,
+		functor: OperationFunctor.Controlled); 
+
+double inputWidth =
+sim.GetMetric<Primitive.X, MultiControlledXDriver>(
+		WidthCounter.Metrics.InputWidth,
+		functor: OperationFunctor.Controlled);
+```
+
+上面程序中第一部分运行了`MultiControlledXDriver`，第二部分使用`QCTraceSimulator.GetMetric`方法來获取受控的`X`门操作中分配的量子比特数和输入其中的量子数量。最后，我们可以使用以下代码得到CSV格式的输出结果：
+
+```
+string csvSummary = sim.ToCSV()[MetricCalculatorsNames.widthCounter];
+```
