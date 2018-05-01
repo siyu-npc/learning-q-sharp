@@ -1,3 +1,7 @@
+*There are much many text of Latex Mathtype in this document,yet it is hard for Github to render these Mathtype.So I strongly recommend you to browse this html page :
+[HTML](https://swardsman.github.io/learning-q-sharp/)
+for a perfect experience.*
+
 # 写给开发者的量子计算入门教程 
 
 ##															 						---  基于Q#语言描述
