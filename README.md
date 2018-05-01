@@ -1,14 +1,12 @@
-<script type="text/javascript" async src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
 # 写给开发者的量子计算入门教程 
 
 ##															 						---  基于Q#语言描述
 
 
 
-**$$version: 0.1.0$$**
+**$version: 0.1.0$**
 
-**$$date:2018-05-01$$**
+**$date:2018-05-01$**
 
 
 
@@ -37,7 +35,7 @@
 
 ## 第一部分 量子计算的基础知识
 
-在经典计算中，信息存储和处理的基本单位是bit，每一个bit要么表示确定的0，要么表示确定的1。与之相似，量子计算中信息存储和处理的基本单位是qubit（量子比特，Quantum Bit），它也有两个状态$$|0 \rangle$$ 和$$|1 \rangle$$ ，与经典bit不同的是，qubit并不处于一个特定的状态下，而是处于两个基本状态$$|0\rangle$$ 和$$|1\rangle$$ 的量子叠加态中，或者说它同时处于$$|0\rangle$$ 和$$|1\rangle$$ 状态。
+在经典计算中，信息存储和处理的基本单位是bit，每一个bit要么表示确定的0，要么表示确定的1。与之相似，量子计算中信息存储和处理的基本单位是qubit（量子比特，Quantum Bit），它也有两个状态$|0 \rangle$ 和$|1 \rangle$ ，与经典bit不同的是，qubit并不处于一个特定的状态下，而是处于两个基本状态$|0\rangle$ 和$|1\rangle$ 的量子叠加态中，或者说它同时处于$|0\rangle$ 和$|1\rangle$ 状态。
 
 正是这种诡异的特性，使得量子计算在展现着强大能力的同时，也因其太过违反人们的认知而常常让我们陷入困惑。量子计算与传统的计算机程序设计、开发之间的存在着显著的差别，在经典计算领域里，一切都是确定的，你可以精确地操纵每一个bit来为你服务，可是，一旦进入量子领域，主宰这个世界的就不再是你，每一个qubit都是一副既不可远观（观察造成量子态坍缩）也不可亵玩（量子纠缠）的高冷范儿。理解量子的行为模式、演进过程是学习量子编程的第一步，这一部分的内容主要是对量子、量子态、量子系统等量子计算基础内容的介绍，学习该内容需要对线性代数和概率论的相关概念有基本的了解，不过放心，对于其中的数学我会尽可能地使用简单、便于理解的语言进行描述，不会对学习带来困扰。通过本章的学习，希望能帮助你建立对量子系统的初步印象和认知。
 
@@ -47,21 +45,21 @@
 
 qubit是量子计算中信息存储和处理的基本单位。对于开发者而言，我们不是物理学家，也不是数学家，我们不需要深究量子的内部结构和演变原理，一个qubit对我们而言就是一个抽象的数学模型，它的状态称为**量子态**，由一个含有两个元素的向量来描述，这个向量叫做**量子态向量**（也叫做**态矢**）。如下所示的向量都表示了某一个特定的量子态。
 
-​							$$\begin{bmatrix} 1 \\  0 \end{bmatrix}$$ ，$$\begin{bmatrix} 0 \\  1 \end{bmatrix}$$ ，$$\begin{bmatrix} \frac{1}{\sqrt{2}} \\  \frac{1}{\sqrt{2}} \end{bmatrix}$$ ，$$\begin{bmatrix} \frac{1}{\sqrt{2}} \\  \frac{-1}{\sqrt{2}} \end{bmatrix}$$  ,$$\begin{bmatrix} \frac{1}{\sqrt{2}} \\ \frac{i}{\sqrt{2}} \end{bmatrix}$$ 
+​							$\begin{bmatrix} 1 \\  0 \end{bmatrix}$ ，$\begin{bmatrix} 0 \\  1 \end{bmatrix}$ ，$\begin{bmatrix} \frac{1}{\sqrt{2}} \\  \frac{1}{\sqrt{2}} \end{bmatrix}$ ，$\begin{bmatrix} \frac{1}{\sqrt{2}} \\  \frac{-1}{\sqrt{2}} \end{bmatrix}$  ,$\begin{bmatrix} \frac{1}{\sqrt{2}} \\ \frac{i}{\sqrt{2}} \end{bmatrix}$ 
 
 ​										图1.1  态矢量
 
 当然，并不是任意的二维向量都能用来描述一个qubit的状态，描述量子态的向量的模长必须为1，所谓向量的模长定义如下：
 
-​								$$M(v) = \sqrt{|a_{1}|^{2} + |a_{2}|^{2} + ... + |a_{n}|^{2}}$$
+​								$M(v) = \sqrt{|a_{1}|^{2} + |a_{2}|^{2} + ... + |a_{n}|^{2}}$
 
 > 某些资料上使用术语范数，实际上范数有多种形式，为了避免混淆，此处使用了模长的概念。
 
 
 
-其中，$$v$$ 是一个$$n$$ 维的矢量，$$a_{i}$$ 是$$v$$ 的元素。
+其中，$v$ 是一个$n$ 维的矢量，$a_{i}$ 是$v$ 的元素。
 
-图1中的几个向量中，$$\begin{bmatrix} 1 \\  0 \end{bmatrix}$$ 和$$\begin{bmatrix} 0 \\  1 \end{bmatrix}$$ 有着特殊的意义，它们代表着一个量子的基态，任意一个量子态都可以由它们的线性叠加来表示。实际上，一个量子的所有状态构成了一个**量子态空间**，$$\begin{bmatrix} 1 \\  0 \end{bmatrix}$$ 和$$\begin{bmatrix} 0 \\  1 \end{bmatrix}$$ 是这个空间的一组基底，它们也对应着经典计算中一个bit值的0和1，在量子计算中，我们更常使用符号$$|0\rangle$$ 和$$|1\rangle$$ 来表示这一组基态矢量，这种符号叫做Dirac符号，我们会在后文中详细介绍。当然了，学过线性代数的同学肯定知道一个空间的基底不止一组，对于量子态空间而言同样如此。
+图1中的几个向量中，$\begin{bmatrix} 1 \\  0 \end{bmatrix}$ 和$\begin{bmatrix} 0 \\  1 \end{bmatrix}$ 有着特殊的意义，它们代表着一个量子的基态，任意一个量子态都可以由它们的线性叠加来表示。实际上，一个量子的所有状态构成了一个**量子态空间**，$\begin{bmatrix} 1 \\  0 \end{bmatrix}$ 和$\begin{bmatrix} 0 \\  1 \end{bmatrix}$ 是这个空间的一组基底，它们也对应着经典计算中一个bit值的0和1，在量子计算中，我们更常使用符号$|0\rangle$ 和$|1\rangle$ 来表示这一组基态矢量，这种符号叫做Dirac符号，我们会在后文中详细介绍。当然了，学过线性代数的同学肯定知道一个空间的基底不止一组，对于量子态空间而言同样如此。
 
 ### 1.2 单量子态的测量
 
@@ -73,7 +71,7 @@ qubit是量子计算中信息存储和处理的基本单位。对于开发者而
 
 相信很多人都听说过“薛定谔的猫”，当我们未对其进行观察时，猫处于既死又活的叠加态，一旦我们进行了观察，猫就立即处于要么死要么活的确定态。量子也是这样，根据量子力学原理，当对量子进行测量或观察（位置、动量等）时，必然会导致量子态**坍缩**。我们只能得到测量后的一种确定的状态，而无从知晓测量前量子的真正状态。
 
-测量会导致量子态坍缩为某个基态（$$|0 \rangle​$$ 或$$|1 \rangle​$$ )。一个状态为$$|\psi \rangle​$$ 的量子，其状态可以表示为$$|\psi \rangle = \alpha |0 \rangle + \beta |1 \rangle​$$ ，其中$$\alpha​$$ 和$$\beta​$$ 均为复数，对其进行测量后得到状态$$|0 \rangle​$$ 的概率为$$| \alpha |^2​$$ ，得到状态$$|1 \rangle​$$ 的概率为$$ | \beta |^2​$$ ，根据概率论的知识，我们可以得出$$\alpha​$$ 和$$\beta​$$ 满足$$| \alpha |^2 + | \beta |^2 = 1​$$ 。
+测量会导致量子态坍缩为某个基态（$|0 \rangle​$ 或$|1 \rangle​$ )。一个状态为$|\psi \rangle​$ 的量子，其状态可以表示为$|\psi \rangle = \alpha |0 \rangle + \beta |1 \rangle​$ ，其中$\alpha​$ 和$\beta​$ 均为复数，对其进行测量后得到状态$|0 \rangle​$ 的概率为$| \alpha |^2​$ ，得到状态$|1 \rangle​$ 的概率为$ | \beta |^2​$ ，根据概率论的知识，我们可以得出$\alpha​$ 和$\beta​$ 满足$| \alpha |^2 + | \beta |^2 = 1​$ 。
 
 上面的描述似乎说明了我们永远也无法得到一个量子的确切状态，无法得到确切状态的系统怎么会有用呢？并且又怎么为我们所用呢？
 
@@ -81,13 +79,13 @@ qubit是量子计算中信息存储和处理的基本单位。对于开发者而
 
 ### 1.3 量子门
 
-在经典计算中，对bit的处理和操作是通过一系列各种各样的门（Gate）来实现的。常见的有与门、非门、或门和异或门等，我们日常所写的程序最终都由这些门来具体执行。量子计算也遵循这一套路，通过各种**量子门**对量子进行相应的操作，常用的量子门有$$X$$、$$Y$$、$$Z$$、$$S$$、$$H$$和$$T$$门等。各种常见的门对应的符号如下图所示，其中左侧为bit门，右侧为量子门。
+在经典计算中，对bit的处理和操作是通过一系列各种各样的门（Gate）来实现的。常见的有与门、非门、或门和异或门等，我们日常所写的程序最终都由这些门来具体执行。量子计算也遵循这一套路，通过各种**量子门**对量子进行相应的操作，常用的量子门有$X$、$Y$、$Z$、$S$、$H$和$T$门等。各种常见的门对应的符号如下图所示，其中左侧为bit门，右侧为量子门。
 
 ![经典门与量子门](./image/ClassicalGatesAndQuantumGates.jpg) 
 
 ​											图1.3  经典门与量子门
 
-在上面的量子门中，X门对一个量子态取反，从这一点上来说，X门与经典的非门非常相似，不同之处在于X门作用于一个状态为$$\alpha |0 \rangle + \beta |1 \rangle$$量子时，得到的结果为$$\beta |0 \rangle + \alpha |1 \rangle$$ ，也就是交换了两个基态的系数，并不是改变它们的符号。
+在上面的量子门中，X门对一个量子态取反，从这一点上来说，X门与经典的非门非常相似，不同之处在于X门作用于一个状态为$\alpha |0 \rangle + \beta |1 \rangle$量子时，得到的结果为$\beta |0 \rangle + \alpha |1 \rangle$ ，也就是交换了两个基态的系数，并不是改变它们的符号。
 
 实际上，量子门与经典计算中的门操作之间并没有清晰明确的对应关系，并且对于每个量子门，其输入的qubit数量与输出的qubit数量必须保持一致（上图中量子门左右两侧的一条横线就代表着一个qubit），这一点与经典计算大不相同，我们都知道，与门、或门等都是接受两个bit输入而产生一个bit输出，这一基本差别也说明了虽然我们可以借鉴经典计算中的某些概念来加强对量子计算的理解，但始终要记住这两个领域存在本质的不同，千万不能生搬硬套。
 
@@ -97,7 +95,7 @@ qubit是量子计算中信息存储和处理的基本单位。对于开发者而
 
 ​									图1.4  量子门与对应矩阵
 
-实际上，我们熟知的大小为$$2 \times 2$$ 的单位矩阵$$I$$ 也对应一个量子门操作，当然这个门对量子态不产生任何影响。$$I$$ 、$$X（Pauli-X）$$ 、$$Y（Pauli-Y）$$ 和$$Z（Pauli-Z）$$ 门构成了Pauli量子门集，但我们通常会忽略$$I$$ 门。在上图中的几种量子门中，$$Z$$ 门作用于$$|0 \rangle$$ 时仍然得到$$|0 \rangle$$ ，作用于$$|1 \rangle$$ 时得到$$- | 1 \rangle$$ ，$$H$$ 门（Hadamard门）作用于$$|0 \rangle$$ 时得到$$(|0 \rangle + |1 \rangle) / \sqrt{2}$$ ，作用于$$|1 \rangle$$ 时得到$$(|0 \rangle - |1 \rangle) / \sqrt{2}$$ ，细心的你一定注意到了，$$T$$ 门（$$\pi / 8$$ 门）实际上是$$S$$ 门（Phase门）的平方根，因为$$e ^{i \pi / 4}$$ 是$$i$$ 的平方根（之所以称其为$$\pi/8$$ 而非$$\pi/4$$ 主要是历史原因）。这几种量子门在量子计算中非常重要，并且在后面的内容以及实际运用中也会频繁出现。
+实际上，我们熟知的大小为$2 \times 2$ 的单位矩阵$I$ 也对应一个量子门操作，当然这个门对量子态不产生任何影响。$I$ 、$X（Pauli-X）$ 、$Y（Pauli-Y）$ 和$Z（Pauli-Z）$ 门构成了Pauli量子门集，但我们通常会忽略$I$ 门。在上图中的几种量子门中，$Z$ 门作用于$|0 \rangle$ 时仍然得到$|0 \rangle$ ，作用于$|1 \rangle$ 时得到$- | 1 \rangle$ ，$H$ 门（Hadamard门）作用于$|0 \rangle$ 时得到$(|0 \rangle + |1 \rangle) / \sqrt{2}$ ，作用于$|1 \rangle$ 时得到$(|0 \rangle - |1 \rangle) / \sqrt{2}$ ，细心的你一定注意到了，$T$ 门（$\pi / 8$ 门）实际上是$S$ 门（Phase门）的平方根，因为$e ^{i \pi / 4}$ 是$i$ 的平方根（之所以称其为$\pi/8$ 而非$\pi/4$ 主要是历史原因）。这几种量子门在量子计算中非常重要，并且在后面的内容以及实际运用中也会频繁出现。
 
 除了上面提到的量子门，那么还有其它的量子门吗？我负责任地告诉你，不仅有，而且有无穷多个。之所以有无穷多个量子门，是因为量子态空间是连续的，不像经典计算中，bit空间是离散的只有0、1两个值，因此量子态之间的转换关系、映射关系也是无穷无尽的。
 
@@ -105,19 +103,19 @@ qubit是量子计算中信息存储和处理的基本单位。对于开发者而
 
 
 
-> 定义一、一个$$n$$ 维复方阵的共轭转置矩阵与其逆矩阵相等，那么这个矩阵就是幺正矩阵。
+> 定义一、一个$n$ 维复方阵的共轭转置矩阵与其逆矩阵相等，那么这个矩阵就是幺正矩阵。
 
 
 
-以上面的$$S$$ 门$$\begin{bmatrix} \quad 1\qquad 0 \quad \\ 0\qquad i \end{bmatrix}$$为例，我们使用$$S^{\dagger }$$ 表示$$S$$ 的共轭转置矩阵，那么$$S ^{\dagger} = \begin{bmatrix} \quad 1\qquad 0 \quad \\ 0\quad -i \end{bmatrix}$$，计算可得$$SS ^{\dagger} = I$$ ，也就是说$$S ^{\dagger} = \bar{S}$$ ，这里的$$\bar{S}$$ 表示$$S$$ 的逆矩阵，因此矩阵$$S$$ 就是一个幺正矩阵，或者也可以说矩阵$$S$$ 是幺正的。通过简单的验算，我们可以证明上面提到的X、Y、Z门等都是幺正的。
+以上面的$S$ 门$\begin{bmatrix} \quad 1\qquad 0 \quad \\ 0\qquad i \end{bmatrix}$为例，我们使用$S^{\dagger }$ 表示$S$ 的共轭转置矩阵，那么$S ^{\dagger} = \begin{bmatrix} \quad 1\qquad 0 \quad \\ 0\quad -i \end{bmatrix}$，计算可得$SS ^{\dagger} = I$ ，也就是说$S ^{\dagger} = \bar{S}$ ，这里的$\bar{S}$ 表示$S$ 的逆矩阵，因此矩阵$S$ 就是一个幺正矩阵，或者也可以说矩阵$S$ 是幺正的。通过简单的验算，我们可以证明上面提到的X、Y、Z门等都是幺正的。
 
-那么为什么量子门矩阵必须是幺正的呢？这是因为，根据量子力学的原理，量子态的演变必须是幺正的。式1是[Schrodinger 方程](https://en.wikipedia.org/wiki/Schr%C3%B6dinger_equation)，它描述了一个量子态在时域上的演进，式中的$$h$$ 是[普朗克常量](https://en.wikipedia.org/wiki/Planck_constant)，H是一个特定的[汉密尔顿算子（Hamiltonian）](https://www.encyclopediaofmath.org/index.php/Hamilton_operator)，这里我们不必对其进行深究。对式1进行积分运算后我们最终可以得到$$t1$$ 和$$t2$$ 时刻的量子态之间的演进过程，如式3所示。可以证明式3中的$$exp[\frac {-iH(t_{2} - t_{1})} {h}] $$ 是幺正的，它对应的幺正矩阵用$$U(t_1,t_2)$$ 表示【详细证明过程请《Quantum_Computation_and_Quantum_Information》第82到83页】，因此量子门必须是幺正的。从另一个更直观的角度来看，量子空间是一个连续空间，一个量子态可以演进为任意其它量子态，同时演进后的量子态依然能回归最初的状态，这意味着量子门操作必须是可逆的，在这个过程中不能有信息的丢失，幺正矩阵恰恰就代表着这样的可逆过程。例如有一个状态为$$|\psi \rangle = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1\end{bmatrix}$$ 的量子，先对其应用$$S$$ 门，再应用$$S ^{\dagger}$$ 门，因为对量子应用量子门操作相当于态矢量左乘相应的矩阵，因此上述过程可表述为$$S ^{\dagger} ( S\cdot |\psi \rangle) = (S ^{\dagger} \cdot S) \cdot |\psi \rangle = I \cdot |\psi \rangle = |\psi \rangle$$ ，经过了两次门操作后，量子又回到了最初的状态。
+那么为什么量子门矩阵必须是幺正的呢？这是因为，根据量子力学的原理，量子态的演变必须是幺正的。式1是[Schrodinger 方程](https://en.wikipedia.org/wiki/Schr%C3%B6dinger_equation)，它描述了一个量子态在时域上的演进，式中的$h$ 是[普朗克常量](https://en.wikipedia.org/wiki/Planck_constant)，H是一个特定的[汉密尔顿算子（Hamiltonian）](https://www.encyclopediaofmath.org/index.php/Hamilton_operator)，这里我们不必对其进行深究。对式1进行积分运算后我们最终可以得到$t1$ 和$t2$ 时刻的量子态之间的演进过程，如式3所示。可以证明式3中的$exp[\frac {-iH(t_{2} - t_{1})} {h}] $ 是幺正的，它对应的幺正矩阵用$U(t_1,t_2)$ 表示【详细证明过程请《Quantum_Computation_and_Quantum_Information》第82到83页】，因此量子门必须是幺正的。从另一个更直观的角度来看，量子空间是一个连续空间，一个量子态可以演进为任意其它量子态，同时演进后的量子态依然能回归最初的状态，这意味着量子门操作必须是可逆的，在这个过程中不能有信息的丢失，幺正矩阵恰恰就代表着这样的可逆过程。例如有一个状态为$|\psi \rangle = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1\end{bmatrix}$ 的量子，先对其应用$S$ 门，再应用$S ^{\dagger}$ 门，因为对量子应用量子门操作相当于态矢量左乘相应的矩阵，因此上述过程可表述为$S ^{\dagger} ( S\cdot |\psi \rangle) = (S ^{\dagger} \cdot S) \cdot |\psi \rangle = I \cdot |\psi \rangle = |\psi \rangle$ ，经过了两次门操作后，量子又回到了最初的状态。
 
-​									$$ih \frac{d|\psi \rangle}{dt} = H|\psi \rangle$$ (1)
+​									$ih \frac{d|\psi \rangle}{dt} = H|\psi \rangle$ (1)
 
-​									$$\int_{|\psi_{t_1} \rangle}^{|\psi_{t_2} \rangle} \frac{ihd|\psi \rangle}{H|\psi \rangle} = \int_{t_{1}}^{t_{2}}dt$$ (2)
+​									$\int_{|\psi_{t_1} \rangle}^{|\psi_{t_2} \rangle} \frac{ihd|\psi \rangle}{H|\psi \rangle} = \int_{t_{1}}^{t_{2}}dt$ (2)
 
-​									$$|\psi_{t_1}\rangle = exp[\frac {-iH(t_{2} - t_{1})} {h}] |\psi (t_{2}) \rangle= U(t_{1},t_{2}) | \psi (t_{1}) \rangle$$ (3)
+​									$|\psi_{t_1}\rangle = exp[\frac {-iH(t_{2} - t_{1})} {h}] |\psi (t_{2}) \rangle= U(t_{1},t_{2}) | \psi (t_{1}) \rangle$ (3)
 
 幺正矩阵有着许多非常有用而又有趣的性质。例如它作用于一个向量时不会改变该向量的模长，构成它的列向量或行向量同时也是一组标准正交基等，这些性质我们不再赘述，以后用到时我们会详细说明，感兴趣的同学也可以查阅相关资料。
 
@@ -125,7 +123,7 @@ qubit是量子计算中信息存储和处理的基本单位。对于开发者而
 
 前面的章节中，描述一个量子的状态我们使用了向量和Dirac符号相结合的方式，现在我们对Dirac符号进行详细的讲解。
 
-[Dirac符号](https://en.wikipedia.org/wiki/Bra%E2%80%93ket_notation)是以其提出者狄拉克的名字命名的，它在1939年由狄拉克提出之后，随即便与[希尔伯特空间](https://en.wikipedia.org/wiki/Hilbert_space)一起构成了量子力学的基本分析工具。Dirac将希尔伯特空间一分为二，成为两个相互对偶的空间，用右矢表示量子态矢量，形式为$$|\cdot \rangle$$ ，用左矢表示量子态对偶矢量，形式为$$\langle \cdot |$$ ，右矢是一个列向量，左矢是右矢的共轭，它是一个行向量。这一符号体系非常简洁明了，右矢即态矢，其符号箭头指向右侧，左矢就是其共轭矢量，符号箭头指向左侧，我们使用$$|0 \rangle$$ 和$$|1 \rangle$$ 分别表示量子态的两个基态$$\begin{bmatrix} 1 \\ 0\end{bmatrix}$$ 和$$\begin{bmatrix} 0 \\ 1\end{bmatrix}$$ ，注意$$|0 \rangle$$ 并不是0向量（$$\begin{bmatrix} 0 \\ 0\end{bmatrix}$$ )。Dirac符号也叫做“$$bra-ket$$"符号，其提出者狄拉克将”括号（bracket）“这个单词一分为二，左边为”$$bra$$"，右边为“$$ket$$"，因此左矢$$\langle \cdot |$$又叫做”$$bra$$"，右矢$$|\cdot \rangle$$又叫做“$$ket$$"。
+[Dirac符号](https://en.wikipedia.org/wiki/Bra%E2%80%93ket_notation)是以其提出者狄拉克的名字命名的，它在1939年由狄拉克提出之后，随即便与[希尔伯特空间](https://en.wikipedia.org/wiki/Hilbert_space)一起构成了量子力学的基本分析工具。Dirac将希尔伯特空间一分为二，成为两个相互对偶的空间，用右矢表示量子态矢量，形式为$|\cdot \rangle$ ，用左矢表示量子态对偶矢量，形式为$\langle \cdot |$ ，右矢是一个列向量，左矢是右矢的共轭，它是一个行向量。这一符号体系非常简洁明了，右矢即态矢，其符号箭头指向右侧，左矢就是其共轭矢量，符号箭头指向左侧，我们使用$|0 \rangle$ 和$|1 \rangle$ 分别表示量子态的两个基态$\begin{bmatrix} 1 \\ 0\end{bmatrix}$ 和$\begin{bmatrix} 0 \\ 1\end{bmatrix}$ ，注意$|0 \rangle$ 并不是0向量（$\begin{bmatrix} 0 \\ 0\end{bmatrix}$ )。Dirac符号也叫做“$bra-ket$"符号，其提出者狄拉克将”括号（bracket）“这个单词一分为二，左边为”$bra$"，右边为“$ket$"，因此左矢$\langle \cdot |$又叫做”$bra$"，右矢$|\cdot \rangle$又叫做“$ket$"。
 
 我们将量子计算中一些常用的运算总结在了表1.1中，其中包含了使用Dirac符号进行内积、外积等运算的形式。
 
@@ -135,136 +133,136 @@ qubit是量子计算中信息存储和处理的基本单位。对于开发者而
 
 |                     运算                      |                             功能                             |
 | :-------------------------------------------: | :----------------------------------------------------------: |
-|                    $$Z ^*$$                     |           复数$$Z$$ 的共轭，如$$(1 + i) ^* = (1 - i)$$           |
-|                $$|\psi \rangle$$                |                      右矢，也叫做$$ket$$                       |
-|                $$\langle \psi|$$                |             左矢（右矢的对偶矢量），也叫做$$bra$$              |
-|       $$\langle \varphi | \psi \rangle$$        |     两个矢量$$| \varphi \rangle$$ 和$$|\psi \rangle$$ 的内积     |
-|      $$| \varphi \rangle \langle \psi |$$       |     两个矢量$$| \varphi \rangle$$ 和$$|\psi \rangle$$ 的外积     |
-| $$| \varphi \rangle \bigotimes | \psi \rangle$$ |    两个矢量$$| \varphi \rangle$$ 和$$|\psi \rangle$$ 的张量积    |
-|      $$| \varphi \rangle | \psi \rangle$$       |                     矢量张量积的简写形式                     |
-|                    $$A ^*$$                     |                        矩阵$$A$$ 的共轭                        |
-|                   $$A ^{T}$$                    |                        矩阵$$A$$ 的转置                        |
-|                $$A ^{\dagger}$$                 | 矩阵$$A$$ 的转置共轭，$$\begin{bmatrix} \quad a\qquad b \quad \\ c\qquad d \end{bmatrix} ^{\dagger} = \begin{bmatrix} \quad a^*\qquad c^* \quad \\ b^*\qquad d* \end{bmatrix}$$ |
-|               $$A \bigotimes B$$                |                  两个矩阵$$A$$ 和$$B$$ 的张量积                  |
-|     $$\langle \varphi | A | \psi \rangle$$      | $$| \varphi \rangle$$ 与$$A | \psi \rangle$$ 的内积，等价于$$A ^{\dagger} | \varphi \rangle$$ 与$$| \psi \rangle$$ 的内积 |
+|                    $Z ^*$                     |           复数$Z$ 的共轭，如$(1 + i) ^* = (1 - i)$           |
+|                $|\psi \rangle$                |                      右矢，也叫做$ket$                       |
+|                $\langle \psi|$                |             左矢（右矢的对偶矢量），也叫做$bra$              |
+|       $\langle \varphi | \psi \rangle$        |     两个矢量$| \varphi \rangle$ 和$|\psi \rangle$ 的内积     |
+|      $| \varphi \rangle \langle \psi |$       |     两个矢量$| \varphi \rangle$ 和$|\psi \rangle$ 的外积     |
+| $| \varphi \rangle \bigotimes | \psi \rangle$ |    两个矢量$| \varphi \rangle$ 和$|\psi \rangle$ 的张量积    |
+|      $| \varphi \rangle | \psi \rangle$       |                     矢量张量积的简写形式                     |
+|                    $A ^*$                     |                        矩阵$A$ 的共轭                        |
+|                   $A ^{T}$                    |                        矩阵$A$ 的转置                        |
+|                $A ^{\dagger}$                 | 矩阵$A$ 的转置共轭，$\begin{bmatrix} \quad a\qquad b \quad \\ c\qquad d \end{bmatrix} ^{\dagger} = \begin{bmatrix} \quad a^*\qquad c^* \quad \\ b^*\qquad d* \end{bmatrix}$ |
+|               $A \bigotimes B$                |                  两个矩阵$A$ 和$B$ 的张量积                  |
+|     $\langle \varphi | A | \psi \rangle$      | $| \varphi \rangle$ 与$A | \psi \rangle$ 的内积，等价于$A ^{\dagger} | \varphi \rangle$ 与$| \psi \rangle$ 的内积 |
 
 我们重点讲解一下内积、外积与张量积运算，这几种运算广泛应用于量子计算、量子程序设计、量子门分解等各种场合中，知悉这些运算的内涵和方法是学习量子计算的基础，但是请放心，我会以非常简单的形式告诉你这些运算的内涵，绝对不会让你为繁杂的数学运算所困扰。
 
-首先来看矢量的内积运算。矢量的内积也叫做点积，假设我们有两个矢量$$| \alpha \rangle$$ 和$$| \beta \rangle$$ ，这两个矢量拥有相同的元素个数$$N$$ ，那么它们的内积定义为：
+首先来看矢量的内积运算。矢量的内积也叫做点积，假设我们有两个矢量$| \alpha \rangle$ 和$| \beta \rangle$ ，这两个矢量拥有相同的元素个数$N$ ，那么它们的内积定义为：
 
-​							$$|\alpha \rangle \cdot | \beta \rangle = \alpha_{1}^*\beta_{1} + \alpha_{2}^*\beta_{2} + \cdots + \alpha_{N}^*\beta_{N} = \sum_{i=1}^{N}\alpha_{i}^* \beta_{i} $$
+​							$|\alpha \rangle \cdot | \beta \rangle = \alpha_{1}^*\beta_{1} + \alpha_{2}^*\beta_{2} + \cdots + \alpha_{N}^*\beta_{N} = \sum_{i=1}^{N}\alpha_{i}^* \beta_{i} $
 
-其中$$\alpha_{i}$$ 和$$\beta_{i}$$ 分别是这两个矢量的元素。从上面的等式中可以看出，两个矢量的内积就是第一个矢量中各元素的共轭与第二个矢量对应元素乘积的加和，使用Dirac符号可以非常方便地将内积表示为：$$\langle \alpha | \beta \rangle$$ ，其左侧部分$$\langle \alpha |$$ 正是矢量$$| \alpha \rangle$$ 的复数共轭，且与$$|\alpha \rangle$$ 相互对偶。
+其中$\alpha_{i}$ 和$\beta_{i}$ 分别是这两个矢量的元素。从上面的等式中可以看出，两个矢量的内积就是第一个矢量中各元素的共轭与第二个矢量对应元素乘积的加和，使用Dirac符号可以非常方便地将内积表示为：$\langle \alpha | \beta \rangle$ ，其左侧部分$\langle \alpha |$ 正是矢量$| \alpha \rangle$ 的复数共轭，且与$|\alpha \rangle$ 相互对偶。
 
-两个矢量$$| \alpha \rangle$$ 和$$| \beta \rangle$$ 的外积定义为$$ |\alpha \rangle \langle \beta|$$ ，因为$$|\alpha \rangle$$ 和$$\langle \beta|$$ 分别为列向量和行向量，因此矢量的外积是一个方阵，这个方阵的大小为$$N \times N$$ 。
+两个矢量$| \alpha \rangle$ 和$| \beta \rangle$ 的外积定义为$ |\alpha \rangle \langle \beta|$ ，因为$|\alpha \rangle$ 和$\langle \beta|$ 分别为列向量和行向量，因此矢量的外积是一个方阵，这个方阵的大小为$N \times N$ 。
 
-两个矩阵$$A$$ 和$$B$$ 的张量积表示为$$A \bigotimes B$$ ，它的定义如下所示：
+两个矩阵$A$ 和$B$ 的张量积表示为$A \bigotimes B$ ，它的定义如下所示：
 
-​						$$A \bigotimes B = \begin{bmatrix}  A_{11}B \quad A_{12}B \quad \cdots \quad A_{1n}B \\  A_{21}B \quad A_{22}B \quad \cdots \quad A_{2n}B \\  \vdots \quad \qquad \vdots \quad \qquad \vdots \quad \qquad \vdots \\ A_{m1}B \quad A_{m2}B \quad \cdots \quad A_{mn}B\end{bmatrix}$$ 
+​						$A \bigotimes B = \begin{bmatrix}  A_{11}B \quad A_{12}B \quad \cdots \quad A_{1n}B \\  A_{21}B \quad A_{22}B \quad \cdots \quad A_{2n}B \\  \vdots \quad \qquad \vdots \quad \qquad \vdots \quad \qquad \vdots \\ A_{m1}B \quad A_{m2}B \quad \cdots \quad A_{mn}B\end{bmatrix}$ 
 
-其中，矩阵$$A$$ 的大小为$$m \times n$$ 。矢量可以看做是只有一列元素的矩阵，因此矢量之间的张量积也遵循着上面的运算形式，两个矢量$$| \alpha \rangle$$ 和$$| \beta \rangle$$ 的张量积为：
+其中，矩阵$A$ 的大小为$m \times n$ 。矢量可以看做是只有一列元素的矩阵，因此矢量之间的张量积也遵循着上面的运算形式，两个矢量$| \alpha \rangle$ 和$| \beta \rangle$ 的张量积为：
 
-​									$$| \alpha \rangle \bigotimes | \beta \rangle = \begin{bmatrix} \alpha_{1} |\beta \rangle \\ \alpha_{2} |\beta \rangle \\ \vdots \\ \alpha_{N}|\beta \rangle \end{bmatrix}$$ 
+​									$| \alpha \rangle \bigotimes | \beta \rangle = \begin{bmatrix} \alpha_{1} |\beta \rangle \\ \alpha_{2} |\beta \rangle \\ \vdots \\ \alpha_{N}|\beta \rangle \end{bmatrix}$ 
 
 ### 1.5 量子态可视化
 
 目前为止，我们对量子态以及量子门这些基本对象的描述都是通过数学工具进行的，这一节里我们使用另一种更直观的方式对它们进行可视化的描述。
 
-首先，一个量子态可以表示为$$|\psi \rangle = \alpha |0 \rangle + \beta |1 \rangle$$ ，这个形式使我们自然而然地想到使用一个二维空间来描述一个量子态，$$|0 \rangle$$ 和$$|1 \rangle$$ 分别是这个二维空间的坐标轴，态矢量$$|\psi \rangle$$ 为一条由原点出发指向坐标$$(\alpha , \beta)$$ 的有向线段，图1.5所示为态矢量$$|\psi \rangle$$ 和$$X$$ 门作用于$$|\psi \rangle$$ 的示意图。
+首先，一个量子态可以表示为$|\psi \rangle = \alpha |0 \rangle + \beta |1 \rangle$ ，这个形式使我们自然而然地想到使用一个二维空间来描述一个量子态，$|0 \rangle$ 和$|1 \rangle$ 分别是这个二维空间的坐标轴，态矢量$|\psi \rangle$ 为一条由原点出发指向坐标$(\alpha , \beta)$ 的有向线段，图1.5所示为态矢量$|\psi \rangle$ 和$X$ 门作用于$|\psi \rangle$ 的示意图。
 
 ![二维空间态矢量](./image/%E4%BA%8C%E7%BB%B4%E7%A9%BA%E9%97%B4%E6%80%81%E7%9F%A2%E9%87%8F.jpg)
 
 ​							图1.5  量子态在二维平面内的示意图
 
-但是由于量子态空间是一个复数空间，使用上面的二维平面并不能完备地对这个空间进行描述。我们现在重新审视量子态$$|\psi \rangle = \alpha |0 \rangle + \beta |1 \rangle$$ ，因为$$\alpha$$ 和$$\beta$$ 是复数，根据[欧拉公式](http://www.baike.com/wiki/%E6%AC%A7%E6%8B%89%E5%85%AC%E5%BC%8F)和三维空间坐标变换等数学工具，$$|\psi \rangle$$ 可以表示为：
+但是由于量子态空间是一个复数空间，使用上面的二维平面并不能完备地对这个空间进行描述。我们现在重新审视量子态$|\psi \rangle = \alpha |0 \rangle + \beta |1 \rangle$ ，因为$\alpha$ 和$\beta$ 是复数，根据[欧拉公式](http://www.baike.com/wiki/%E6%AC%A7%E6%8B%89%E5%85%AC%E5%BC%8F)和三维空间坐标变换等数学工具，$|\psi \rangle$ 可以表示为：
 
-​					$$|\psi \rangle = e^{ir}(cos \frac{\theta }{2}|0 \rangle + e^{i\phi }sin \frac {\theta}{2} | 1 \rangle)$$  *[公式的推导可以参考https://en.wikipedia.org/wiki/3-sphere]*
+​					$|\psi \rangle = e^{ir}(cos \frac{\theta }{2}|0 \rangle + e^{i\phi }sin \frac {\theta}{2} | 1 \rangle)$  *[公式的推导可以参考https://en.wikipedia.org/wiki/3-sphere]*
 
-其中$$r$$ 、$$\theta$$ 和$$\phi$$ 均为实数，$$r$$ 在这里是一个全局的相位变换，通常我们不用理会它，所以得到$$|\psi \rangle = cos \frac{\theta }{2}|0 \rangle + e^{i\phi }sin \frac {\theta}{2} | 1 \rangle$$ ，这个式子可以用一个单位球面进行展现，如图1.6所示。
+其中$r$ 、$\theta$ 和$\phi$ 均为实数，$r$ 在这里是一个全局的相位变换，通常我们不用理会它，所以得到$|\psi \rangle = cos \frac{\theta }{2}|0 \rangle + e^{i\phi }sin \frac {\theta}{2} | 1 \rangle$ ，这个式子可以用一个单位球面进行展现，如图1.6所示。
 
 ![Bloch Sphere](./image/BlochSphere.jpg)
 
 ​										图1.6  Bloch Sphere
 
-这个三维单位球面就是Bloch Sphere，它的上、下两个极点分别表示$$|0 \rangle$$ 和$$|1 \rangle$$ 。Bloch Sphere不仅能用来表示量子态，同时能用来演示量子门作用于量子时量子态的演进。假设我们有一个状态为$$\frac{1}{\sqrt{2}}(|0 \rangle + |1 \rangle)$$ 的量子，对其应用$$H$$ 门，演进过程可以用下面的Bloch Sphere展示出来，首先该态矢量绕$$y$$ 轴向下旋转$$90^{\circ}$$ ，最后绕$$x$$ 轴旋转$$180 ^\circ$$ 得到结果$$|0 \rangle$$ 。
+这个三维单位球面就是Bloch Sphere，它的上、下两个极点分别表示$|0 \rangle$ 和$|1 \rangle$ 。Bloch Sphere不仅能用来表示量子态，同时能用来演示量子门作用于量子时量子态的演进。假设我们有一个状态为$\frac{1}{\sqrt{2}}(|0 \rangle + |1 \rangle)$ 的量子，对其应用$H$ 门，演进过程可以用下面的Bloch Sphere展示出来，首先该态矢量绕$y$ 轴向下旋转$90^{\circ}$ ，最后绕$x$ 轴旋转$180 ^\circ$ 得到结果$|0 \rangle$ 。
 
 ![H门演示](./image/Hadamard%E9%97%A8%E5%8F%AF%E8%A7%86%E5%8C%96.jpg)
 
-​							图1.7  $$H$$门应用于$$\frac{1}{\sqrt{2}}(|0 \rangle + |1 \rangle)$$ 的演进过程
+​							图1.7  $H$门应用于$\frac{1}{\sqrt{2}}(|0 \rangle + |1 \rangle)$ 的演进过程
 
-$$H$$ 门是最重要的量子门之一，它作用于$$|0 \rangle$$ 时得到$$|\frac{1}{\sqrt{2}}(|0 \rangle + |1 \rangle)$$ ，作用于$$|1 \rangle$$ 时得到$$\frac{1}{\sqrt{2}}(|0 \rangle - |1 \rangle)$$ ，这两个结果都是$$|0 \rangle$$ 和$$| 1 \rangle$$ 的叠加态，因此$$H$$ 的一个重要作用就是创造量子叠加。根据量子测量一节的知识，对这两个量子态测量得到$$|0 \rangle$$ 和$$|1 \rangle$$ 的概率都是$$\frac{1}{2}$$ ，也就是说测量结果是完全随机的，我们在开发过程中经常会用一些随机数生成算法，但这些算法实质上都是“伪随机”的，而上面的量子测量是“真随机”的，物理原理为这种随机性提供了强力保证，这也正是$$H$$ 门的重要性所在，在很多量子算法中，都会有使用$$H$$ 门的场景。
+$H$ 门是最重要的量子门之一，它作用于$|0 \rangle$ 时得到$|\frac{1}{\sqrt{2}}(|0 \rangle + |1 \rangle)$ ，作用于$|1 \rangle$ 时得到$\frac{1}{\sqrt{2}}(|0 \rangle - |1 \rangle)$ ，这两个结果都是$|0 \rangle$ 和$| 1 \rangle$ 的叠加态，因此$H$ 的一个重要作用就是创造量子叠加。根据量子测量一节的知识，对这两个量子态测量得到$|0 \rangle$ 和$|1 \rangle$ 的概率都是$\frac{1}{2}$ ，也就是说测量结果是完全随机的，我们在开发过程中经常会用一些随机数生成算法，但这些算法实质上都是“伪随机”的，而上面的量子测量是“真随机”的，物理原理为这种随机性提供了强力保证，这也正是$H$ 门的重要性所在，在很多量子算法中，都会有使用$H$ 门的场景。
 
 在量子态空间中，有无穷多的量子门，就有无穷多对应的幺正矩阵，那么随之而来的一个问题就是，每次应用新的量子门时我们都要重新定义一个幺正矩阵吗？每个量子门操作实际上最终都要由相应的硬件来完成，那面对这无穷多的量子门，我相信世界上最伟大的工程师也会望而却步。幸运的是，人们已经证明，存在一个量子门集合，这个集合中只有几种常见的量子门，它们经过不同的组合可以构建出任意的量子门，这个集合也叫做**通用量子门集合**（后文会有更详细的论述）。并且，任意的幺正矩阵都能分解成如下形式（下面的这些数学运算不需要理解或记忆，只要知道一个幺正矩阵可以被分解即可）：
 
-​									$$U = e^{i\alpha}R_z(\beta)R_y(\gamma )R_x(\delta )$$ 
+​									$U = e^{i\alpha}R_z(\beta)R_y(\gamma )R_x(\delta )$ 
 
 其中，
 
-​							$$R_z(\beta) = e^{-i\beta Z/2} = cos \frac{\beta}{2}I - isin{\frac {\beta}{2}}Z = \begin{vmatrix}e^{-i\beta/2} & 0 \\ 0 & e^{i\beta/2} {2}\end{vmatrix}$$ 
+​							$R_z(\beta) = e^{-i\beta Z/2} = cos \frac{\beta}{2}I - isin{\frac {\beta}{2}}Z = \begin{vmatrix}e^{-i\beta/2} & 0 \\ 0 & e^{i\beta/2} {2}\end{vmatrix}$ 
 
-​							$$R_y(\gamma) = e^{-i\gamma Y/2} = cos \frac{\gamma}{2}I - isin{\frac {\gamma}{2}}Y = \begin{vmatrix}cos \frac{\gamma}{2} & -sin \frac{\gamma}{2}\\ sin \frac{\gamma}{2} & cos \frac{\gamma}{2}\end{vmatrix}$$ 
+​							$R_y(\gamma) = e^{-i\gamma Y/2} = cos \frac{\gamma}{2}I - isin{\frac {\gamma}{2}}Y = \begin{vmatrix}cos \frac{\gamma}{2} & -sin \frac{\gamma}{2}\\ sin \frac{\gamma}{2} & cos \frac{\gamma}{2}\end{vmatrix}$ 
 
-​							$$R_x(\delta) = e^{-i\delta X/2} = cos \frac{\delta}{2}I - isin{\frac {\delta}{2}}X = \begin{vmatrix}cos \frac{\delta}{2} & -i sin \frac{\delta}{2} \\ -isin \frac{\delta}{2} & cos \frac{\delta}{2}\end{vmatrix}$$ 
+​							$R_x(\delta) = e^{-i\delta X/2} = cos \frac{\delta}{2}I - isin{\frac {\delta}{2}}X = \begin{vmatrix}cos \frac{\delta}{2} & -i sin \frac{\delta}{2} \\ -isin \frac{\delta}{2} & cos \frac{\delta}{2}\end{vmatrix}$ 
 
-它们分别是由$$X$$ 、$$Y$$ 和$$Z$$ 门等经过旋转等变换得到的，所以任意的量子门都可以通过其它的门构建出来。Bloch Sphere虽然可以很好的展现量子和量子门操作，但它也有自己的局限，比如在面对接下来要讲的多量子系统时就无能为力了。
+它们分别是由$X$ 、$Y$ 和$Z$ 门等经过旋转等变换得到的，所以任意的量子门都可以通过其它的门构建出来。Bloch Sphere虽然可以很好的展现量子和量子门操作，但它也有自己的局限，比如在面对接下来要讲的多量子系统时就无能为力了。
 
 ## 第二章 多量子系统
 
-一个量子系统的状态用一个向量来表示，假设有一个由两个qubit组成的双量子系统，系统中每一个qubit都有两个基本状态$$|0 \rangle$$ 和$$|1 \rangle$$ ，那么显而易见这个双量子系统的基本状态就有4种：$$|0 \rangle |0 \rangle,|0 \rangle |1 \rangle,|1 \rangle |0 \rangle,|1 \rangle |1 \rangle$$ ，简写为：$$|00 \rangle,|01 \rangle,|10 \rangle,|11 \rangle$$ 。事实上，这几种双量子系统的基本状态就是每一个量子基本状态的张量积，根据前面所讲的张量积的计算方法，这几种基态实际上就是：
+一个量子系统的状态用一个向量来表示，假设有一个由两个qubit组成的双量子系统，系统中每一个qubit都有两个基本状态$|0 \rangle$ 和$|1 \rangle$ ，那么显而易见这个双量子系统的基本状态就有4种：$|0 \rangle |0 \rangle,|0 \rangle |1 \rangle,|1 \rangle |0 \rangle,|1 \rangle |1 \rangle$ ，简写为：$|00 \rangle,|01 \rangle,|10 \rangle,|11 \rangle$ 。事实上，这几种双量子系统的基本状态就是每一个量子基本状态的张量积，根据前面所讲的张量积的计算方法，这几种基态实际上就是：
 
-​							$$|00 \rangle = |0 \rangle \bigotimes |0 \rangle = \begin{vmatrix} 1 \\ 0 \\ 0 \\ 0 \end{vmatrix}$$ ，$$|01 \rangle = |0 \rangle \bigotimes |1 \rangle = \begin{vmatrix}0 \\ 1 \\ 0 \\ 0 \end{vmatrix}$$ 
+​							$|00 \rangle = |0 \rangle \bigotimes |0 \rangle = \begin{vmatrix} 1 \\ 0 \\ 0 \\ 0 \end{vmatrix}$ ，$|01 \rangle = |0 \rangle \bigotimes |1 \rangle = \begin{vmatrix}0 \\ 1 \\ 0 \\ 0 \end{vmatrix}$ 
 
-​							$$|10 \rangle = |1 \rangle \bigotimes |0 \rangle = \begin{vmatrix} 0 \\ 0 \\ 1 \\ 0 \end{vmatrix}$$ ，$$|11 \rangle = |1 \rangle \bigotimes |1 \rangle = \begin{vmatrix} 0 \\ 0 \\ 0 \\ 1 \end{vmatrix}$$ 
+​							$|10 \rangle = |1 \rangle \bigotimes |0 \rangle = \begin{vmatrix} 0 \\ 0 \\ 1 \\ 0 \end{vmatrix}$ ，$|11 \rangle = |1 \rangle \bigotimes |1 \rangle = \begin{vmatrix} 0 \\ 0 \\ 0 \\ 1 \end{vmatrix}$ 
 
-这四个向量构成了双量子状态空间的基底，这个空间中其它向量都能由它们的线性叠加表示出来。所以一个双量子系统的状态$$|\psi \rangle$$ 可以表示为$$|\psi \rangle = \alpha_{00}|00 \rangle + \alpha_{01} |01 \rangle + \alpha_{10}|10 \rangle + \alpha_{11}|11 \rangle$$ ，并且$$| \alpha_{00} |^2 + | \alpha_{01} |^2 + | \alpha_{10} |^2 + | \alpha_{11} |^2 = 1$$ ，$$\alpha_{x}^2$$ 为测量这个系统得到相应输出结果的概率。 当qubit数量为$$n(n > 1)$$ 时，多量子系统的基态就是系统内每个量子基态的张量积，$$n$$ 量子系统拥有$$2^{n}$$个基态，它们构成了多量子系统量子态空间的基底，下面所示的就是3量子系统的基态。
+这四个向量构成了双量子状态空间的基底，这个空间中其它向量都能由它们的线性叠加表示出来。所以一个双量子系统的状态$|\psi \rangle$ 可以表示为$|\psi \rangle = \alpha_{00}|00 \rangle + \alpha_{01} |01 \rangle + \alpha_{10}|10 \rangle + \alpha_{11}|11 \rangle$ ，并且$| \alpha_{00} |^2 + | \alpha_{01} |^2 + | \alpha_{10} |^2 + | \alpha_{11} |^2 = 1$ ，$\alpha_{x}^2$ 为测量这个系统得到相应输出结果的概率。 当qubit数量为$n(n > 1)$ 时，多量子系统的基态就是系统内每个量子基态的张量积，$n$ 量子系统拥有$2^{n}$个基态，它们构成了多量子系统量子态空间的基底，下面所示的就是3量子系统的基态。
 
-​							$$|000 \rangle = \begin{vmatrix} 1 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \end{vmatrix}$$ ，$$|001 \rangle = \begin{vmatrix} 0 \\ 1 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \end{vmatrix}$$ ，$$|010 \rangle = \begin{vmatrix} 0 \\ 0 \\ 1 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \end{vmatrix}$$ ，$$|011 \rangle = \begin{vmatrix} 0 \\ 0 \\ 0 \\ 1 \\ 0 \\ 0 \\ 0 \\ 0  \end{vmatrix}$$ 
+​							$|000 \rangle = \begin{vmatrix} 1 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \end{vmatrix}$ ，$|001 \rangle = \begin{vmatrix} 0 \\ 1 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \end{vmatrix}$ ，$|010 \rangle = \begin{vmatrix} 0 \\ 0 \\ 1 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \end{vmatrix}$ ，$|011 \rangle = \begin{vmatrix} 0 \\ 0 \\ 0 \\ 1 \\ 0 \\ 0 \\ 0 \\ 0  \end{vmatrix}$ 
 
-​							$$|100 \rangle = \begin{vmatrix} 0 \\ 0 \\ 0 \\ 0 \\ 1 \\ 0 \\ 0 \\ 0 \end{vmatrix}$$ ，$$|101 \rangle = \begin{vmatrix} 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 1 \\ 0 \\ 0 \end{vmatrix}$$ ，$$|110 \rangle = \begin{vmatrix} 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 1 \\ 0 \end{vmatrix}$$ ，$$|111 \rangle = \begin{vmatrix} 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 1 \end{vmatrix}$$ 
+​							$|100 \rangle = \begin{vmatrix} 0 \\ 0 \\ 0 \\ 0 \\ 1 \\ 0 \\ 0 \\ 0 \end{vmatrix}$ ，$|101 \rangle = \begin{vmatrix} 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 1 \\ 0 \\ 0 \end{vmatrix}$ ，$|110 \rangle = \begin{vmatrix} 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 1 \\ 0 \end{vmatrix}$ ，$|111 \rangle = \begin{vmatrix} 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 1 \end{vmatrix}$ 
 
-随着$$n$$ 的增长，多量子系统的基态数量呈指数级增加，$$n = 500$$ 时，这个量子系统所包含的基态数量甚至超过了宇宙中所有粒子的数量，这将是一个多么广阔的量子态空间！可以说，量子计算的强大能力正是来源于此，我们一步步去发现它背后广阔的天地。
+随着$n$ 的增长，多量子系统的基态数量呈指数级增加，$n = 500$ 时，这个量子系统所包含的基态数量甚至超过了宇宙中所有粒子的数量，这将是一个多么广阔的量子态空间！可以说，量子计算的强大能力正是来源于此，我们一步步去发现它背后广阔的天地。
 
 ### 2.1 量子测量
 
-在前面的单量子系统中，我们也曾经提到过量子测量的概念。回想一下，测量会导致量子态向其基态坍缩，一个状态为$$|\psi \rangle = \alpha |0\rangle + \beta |1 \rangle$$ 的量子，经过测量后得到$$|0 \rangle$$ 或$$|1 \rangle$$ 的概率分别为$$| \alpha | ^{2}$$ 和$$| \beta | ^{2}$$ ，同样，测量一个状态为$$|\psi \rangle = \alpha_{00}|00 \rangle + \alpha_{01} |01 \rangle + \alpha_{10}|10 \rangle + \alpha_{11}|11 \rangle$$ 的双量子系统，得到结果$$\{|00 \rangle , |01 \rangle ,|10 \rangle,|11 \rangle\}$$ 的概率分别为$$\{   |\alpha_{00}|^{2},|\alpha_{01}|^{2},|\alpha_{10}|^{2},|\alpha_{11}|^{2}\}$$ 。
+在前面的单量子系统中，我们也曾经提到过量子测量的概念。回想一下，测量会导致量子态向其基态坍缩，一个状态为$|\psi \rangle = \alpha |0\rangle + \beta |1 \rangle$ 的量子，经过测量后得到$|0 \rangle$ 或$|1 \rangle$ 的概率分别为$| \alpha | ^{2}$ 和$| \beta | ^{2}$ ，同样，测量一个状态为$|\psi \rangle = \alpha_{00}|00 \rangle + \alpha_{01} |01 \rangle + \alpha_{10}|10 \rangle + \alpha_{11}|11 \rangle$ 的双量子系统，得到结果$\{|00 \rangle , |01 \rangle ,|10 \rangle,|11 \rangle\}$ 的概率分别为$\{   |\alpha_{00}|^{2},|\alpha_{01}|^{2},|\alpha_{10}|^{2},|\alpha_{11}|^{2}\}$ 。
 
 量子测量得到的是确定的经典世界的结果，这个结果可以看做是量子系统在经典世界上的投影。
 
-量子系统的测量操作用符号$$M$$表示，一个由$$n$$ 个量子组成系统，其基态有$$2^{n}$$个，这也就意味着有$$2^{n}$$个不同的测量操作符，这些测量操作构成了一个测量集合$$\{M_{m}\}$$ ，索引$$m$$ 表示经过测量后所得到的结果。一个量子态为$$|\psi \rangle$$ 的系统，在经过$$M_{m}$$ 测量操作测量后，产生结果$$m$$ 的概率为：
+量子系统的测量操作用符号$M$表示，一个由$n$ 个量子组成系统，其基态有$2^{n}$个，这也就意味着有$2^{n}$个不同的测量操作符，这些测量操作构成了一个测量集合$\{M_{m}\}$ ，索引$m$ 表示经过测量后所得到的结果。一个量子态为$|\psi \rangle$ 的系统，在经过$M_{m}$ 测量操作测量后，产生结果$m$ 的概率为：
 
-​										$$p(m) = \langle \psi | M_{m}^{\dagger}M_{m} |\psi \rangle$$ 
+​										$p(m) = \langle \psi | M_{m}^{\dagger}M_{m} |\psi \rangle$ 
 
 在测量后，系统所处的状态为：
 
-​										$$\frac {M_{m} | \psi \rangle} {\sqrt {\langle | M_{m}^\dagger M_{m} |\psi \rangle}}$$ 
+​										$\frac {M_{m} | \psi \rangle} {\sqrt {\langle | M_{m}^\dagger M_{m} |\psi \rangle}}$ 
 
 并且，测量操作符必须遵循以下约束：
 
-​										$$\sum_{m} M_{m}^\dagger M_{m} = I$$ 
+​										$\sum_{m} M_{m}^\dagger M_{m} = I$ 
 
 同时，所有可能的测量记过的概率和必须是1，因此：
 
-​							$$1 = \sum_{m}p(m) = \sum_{m}{\langle \psi | M_{m}^\dagger M_{m} |\psi \rangle}$$ 
+​							$1 = \sum_{m}p(m) = \sum_{m}{\langle \psi | M_{m}^\dagger M_{m} |\psi \rangle}$ 
 
-从数学角度来看，量子操作符是量子态系统没个基底与自身的外积。我们以单量子系统为例，构建单量子系统的两个测量操作符为：$$M_{0}=|0 \rangle \langle 0|,M_{1}=|1 \rangle \langle 1|$$ ，观察这两个操作符，我们可以发现$$M_{0}^\dagger M_{0} = M_{0},M_{1}^\dagger M_{1} = M_{1}$$ ，所以$$M_{0}^\dagger M_{0} + M_{1}\dagger M_{1} = M_{0} + M_{1} = I$$ ，因此这两个操作符符合上面的要求，假设一个单量子系统的状态为$$|\psi \rangle = \alpha |0 \rangle + \beta |1 \rangle$$ ，分别应用这两个测量操作，我们得到：
+从数学角度来看，量子操作符是量子态系统没个基底与自身的外积。我们以单量子系统为例，构建单量子系统的两个测量操作符为：$M_{0}=|0 \rangle \langle 0|,M_{1}=|1 \rangle \langle 1|$ ，观察这两个操作符，我们可以发现$M_{0}^\dagger M_{0} = M_{0},M_{1}^\dagger M_{1} = M_{1}$ ，所以$M_{0}^\dagger M_{0} + M_{1}\dagger M_{1} = M_{0} + M_{1} = I$ ，因此这两个操作符符合上面的要求，假设一个单量子系统的状态为$|\psi \rangle = \alpha |0 \rangle + \beta |1 \rangle$ ，分别应用这两个测量操作，我们得到：
 
-​						$$p(0) = \langle \psi | M_{0}^\dagger M_{0} |\psi \rangle = \langle \psi | M_{0} |\psi \rangle = | \alpha |^{2}$$ 
+​						$p(0) = \langle \psi | M_{0}^\dagger M_{0} |\psi \rangle = \langle \psi | M_{0} |\psi \rangle = | \alpha |^{2}$ 
 
-​						$$p(1) = \langle \psi | M_{1}^\dagger M_{1} | \psi \rangle = \langle \psi | M_{1} | \psi \rangle = | \beta |^{2}$$ 
+​						$p(1) = \langle \psi | M_{1}^\dagger M_{1} | \psi \rangle = \langle \psi | M_{1} | \psi \rangle = | \beta |^{2}$ 
 
-这就是我们在前面提到的测量一个单量子时得到$$|0 \rangle$$ 和$$|1 \rangle$$ 的概率分别为$$| \alpha |^{2}$$ 和$$| \beta |^{2}$$ 的由来，同时在测量后，这个量子所处的状态就变成：
+这就是我们在前面提到的测量一个单量子时得到$|0 \rangle$ 和$|1 \rangle$ 的概率分别为$| \alpha |^{2}$ 和$| \beta |^{2}$ 的由来，同时在测量后，这个量子所处的状态就变成：
 
-​										$$\frac {M_{0} |\psi \rangle} {|\alpha |} = \frac{\alpha}{| \alpha |} |0 \rangle$$ 
+​										$\frac {M_{0} |\psi \rangle} {|\alpha |} = \frac{\alpha}{| \alpha |} |0 \rangle$ 
 
-​										$$\frac{M_{1} |\psi \rangle}{| \beta |} = \frac {\beta} {| \beta |} |1 \rangle$$ 
+​										$\frac{M_{1} |\psi \rangle}{| \beta |} = \frac {\beta} {| \beta |} |1 \rangle$ 
 
-实际上结果就是$$|0 \rangle$$ 和$$|1 \rangle$$ 。
+实际上结果就是$|0 \rangle$ 和$|1 \rangle$ 。
 
 在多量子系统中，我们也可以仅测量其中一部分量子的状态。在这里我们要引入一个非常重要的双量子系统：Bell State（也叫做EPR pair）【引用由来】，这个系统的量子态为：
 
-​										$$\frac {|00 \rangle + |11 \rangle} {\sqrt{2}}$$ 
+​										$\frac {|00 \rangle + |11 \rangle} {\sqrt{2}}$ 
 
-该系统有一个非常有趣的特性：测量第一个量子时，得到$$| 0 \rangle$$ 的概率为$$\frac {1}{2}$$ ，此时系统测量后的状态为$$| 00 \rangle$$ ，得到$$|1 \rangle$$ 的概率同样为$$\frac{1}{2}$$，此时系统测量后的状态为$$|11 \rangle$$ ，也就是说，测得第一个量子的状态后，剩下的量子其状态与第一个是一致的，呈现出非常强的关联性。人们已经证明，Bell State中的这种强关联性甚至强于经典系统中这样的性质。这种性质的存在进一步说明了量子系统用于进行量子计算以及其他领域的可能性。【《Quantum_Computation_and_Quantum_Information》第17页】
+该系统有一个非常有趣的特性：测量第一个量子时，得到$| 0 \rangle$ 的概率为$\frac {1}{2}$ ，此时系统测量后的状态为$| 00 \rangle$ ，得到$|1 \rangle$ 的概率同样为$\frac{1}{2}$，此时系统测量后的状态为$|11 \rangle$ ，也就是说，测得第一个量子的状态后，剩下的量子其状态与第一个是一致的，呈现出非常强的关联性。人们已经证明，Bell State中的这种强关联性甚至强于经典系统中这样的性质。这种性质的存在进一步说明了量子系统用于进行量子计算以及其他领域的可能性。【《Quantum_Computation_and_Quantum_Information》第17页】
 
 ### 2.2 多量子门
 
@@ -272,45 +270,45 @@ $$H$$ 门是最重要的量子门之一，它作用于$$|0 \rangle$$ 时得到$$
 
 #### 2.2.1 controlled-NOT门
 
-最基本的多量子门是 $$controlled-NOT$$ （受控非门）门，也叫$$CNOT$$ 门，以双量子系统为例，图2.1所示为双量子系统的$$CNOT$$ 门和其对应的量子门矩阵，图中，$$CNOT$$ 门上方的直线代表了控制量子，下方的直线代表着目标量子，当控制量子的装填为$$|1 \rangle$$ 时，$$X$$ 门作用于目标量子，为$$| 0 \rangle$$ 时，目标量子不受任何影响。
+最基本的多量子门是 $controlled-NOT$ （受控非门）门，也叫$CNOT$ 门，以双量子系统为例，图2.1所示为双量子系统的$CNOT$ 门和其对应的量子门矩阵，图中，$CNOT$ 门上方的直线代表了控制量子，下方的直线代表着目标量子，当控制量子的装填为$|1 \rangle$ 时，$X$ 门作用于目标量子，为$| 0 \rangle$ 时，目标量子不受任何影响。
 
 ![controlled-NOT](./image/CNOT.jpg)
 
-​									图2.1  $$CNOT$$门
+​									图2.1  $CNOT$门
 
-双量子$$CNOT$$ 门输入也输出量子态的对应关系为：
+双量子$CNOT$ 门输入也输出量子态的对应关系为：
 
-​							$$| 00 \rangle \rightarrow |00 \rangle ; |01 \rangle \rightarrow |01 \rangle ; |10 \rangle \rightarrow |11 \rangle ; |11 \rangle \rightarrow |10 \rangle$$ 
+​							$| 00 \rangle \rightarrow |00 \rangle ; |01 \rangle \rightarrow |01 \rangle ; |10 \rangle \rightarrow |11 \rangle ; |11 \rangle \rightarrow |10 \rangle$ 
 
-从另一个角度看，$$CNOT$$ 门的作用相当于对控制量子和目标量子进行模二加运算（异或运算），也就是说，对于状态为$$|A,B \rangle$$ 的双量子系统，经$$CNOT$$ 门作用后，其状态为$$|A , A \oplus B \rangle$$ ，并且模二加运算的结果放在了目标量子中，上图中间部分的图像就是对这一过程的描述。
+从另一个角度看，$CNOT$ 门的作用相当于对控制量子和目标量子进行模二加运算（异或运算），也就是说，对于状态为$|A,B \rangle$ 的双量子系统，经$CNOT$ 门作用后，其状态为$|A , A \oplus B \rangle$ ，并且模二加运算的结果放在了目标量子中，上图中间部分的图像就是对这一过程的描述。
 
 #### 2.2.2 Toffoli门
 
-严格地说，$$Toffoli$$门并不属于量子计算的范畴。在前面我们曾经说过，经典计算中的部分门操作不是幺正的，或者说不是可逆的，而量子门是可逆的并且可以用其他的量子门进行表示，那么在经典世界中是否存在一个门，这个门可以用来表示其它的门并且它还是可逆的？
+严格地说，$Toffoli$门并不属于量子计算的范畴。在前面我们曾经说过，经典计算中的部分门操作不是幺正的，或者说不是可逆的，而量子门是可逆的并且可以用其他的量子门进行表示，那么在经典世界中是否存在一个门，这个门可以用来表示其它的门并且它还是可逆的？
 
-答案就是$$Toffoli$$门。$$Toffoli$$门有三个输入和三个输出，其中两个输入bit是$$controlled-bit$$ （控制bit），剩下的一个是$$target-bit$$ （目标bit），当两个控制bit都为$$1$$ 时，目标bit会被取反，相反则目标bit保持本身状态不变。下面的图就是$$Toffoli$$门的基本形式和其输入输出对照表。
+答案就是$Toffoli$门。$Toffoli$门有三个输入和三个输出，其中两个输入bit是$controlled-bit$ （控制bit），剩下的一个是$target-bit$ （目标bit），当两个控制bit都为$1$ 时，目标bit会被取反，相反则目标bit保持本身状态不变。下面的图就是$Toffoli$门的基本形式和其输入输出对照表。
 
 ![Toffoli门](./image/Toffoli%E9%97%A8.jpg)
 
-​									图2.2  $$Toffoli$$门
+​									图2.2  $Toffoli$门
 
-$$Toffoli$$可以用来实现任意经典计算中的逻辑门，比如下面这个用$$Toffoli$$门实现的与非门（NAND Gate）。
+$Toffoli$可以用来实现任意经典计算中的逻辑门，比如下面这个用$Toffoli$门实现的与非门（NAND Gate）。
 
 ![NAND](./image/NAND.jpg)
 
-​							图2.3  $$Toffoli$$门实现与非门
+​							图2.3  $Toffoli$门实现与非门
 
-$$Toffoli$$门非常重要，之所以非常重要在于虽然它本身是经典计算中的产物，但同样能够用于量子计算中。如前文所述，量子门中输入与输出的qubit数量必须是一致的，$$Toffoli$$门完美地契合这一点，同时，下面的矩阵是$$Toffoli$$门的矩阵表示形式，可以证明这个矩阵是幺正的，从而$$Toffoli$$门也能应用于量子计算中。
+$Toffoli$门非常重要，之所以非常重要在于虽然它本身是经典计算中的产物，但同样能够用于量子计算中。如前文所述，量子门中输入与输出的qubit数量必须是一致的，$Toffoli$门完美地契合这一点，同时，下面的矩阵是$Toffoli$门的矩阵表示形式，可以证明这个矩阵是幺正的，从而$Toffoli$门也能应用于量子计算中。
 
-​									$$\begin{bmatrix} 1\quad 0 \quad 0\quad  0\quad  0\quad  0\quad  0 \quad 0 \\ 0 \quad 1 \quad 0 \quad 0 \quad 0 \quad 0 \quad 0 \quad 0 \\ 0 \quad 0 \quad 1 \quad 0 \quad 0 \quad 0 \quad 0 \quad 0 \\ 0 \quad 0 \quad 0 \quad 1 \quad 0 \quad 0 \quad 0 \quad 0 \\ 0 \quad 0 \quad 0 \quad 0 \quad 1 \quad 0 \quad 0 \quad 0 \\ 0 \quad 0 \quad 0 \quad 0 \quad 0 \quad 1 \quad 0 \quad 0 \\ 0 \quad 0 \quad 0 \quad 0 \quad 0 \quad 0 \quad 0 \quad 1 \\ 0 \quad 0 \quad 0 \quad 0 \quad 0 \quad 0 \quad 1 \quad 0 \end{bmatrix}$$ 
+​									$\begin{bmatrix} 1\quad 0 \quad 0\quad  0\quad  0\quad  0\quad  0 \quad 0 \\ 0 \quad 1 \quad 0 \quad 0 \quad 0 \quad 0 \quad 0 \quad 0 \\ 0 \quad 0 \quad 1 \quad 0 \quad 0 \quad 0 \quad 0 \quad 0 \\ 0 \quad 0 \quad 0 \quad 1 \quad 0 \quad 0 \quad 0 \quad 0 \\ 0 \quad 0 \quad 0 \quad 0 \quad 1 \quad 0 \quad 0 \quad 0 \\ 0 \quad 0 \quad 0 \quad 0 \quad 0 \quad 1 \quad 0 \quad 0 \\ 0 \quad 0 \quad 0 \quad 0 \quad 0 \quad 0 \quad 0 \quad 1 \\ 0 \quad 0 \quad 0 \quad 0 \quad 0 \quad 0 \quad 1 \quad 0 \end{bmatrix}$ 
 
-$$Toffoli$$门说明了很重要的一点：**量子计算和经典计算可以通过某种形式得到形式上的统一**，从现实世界的角度来看，这一点也是完全合理的，毕竟所有的物理系统都可以用量子力学进行描述，同时，人们也已经证明量子计算机也符合图灵机的标准，尽管对人们来说它难以立即。这种统一的观点能够为量子计算的发展带来很大裨益。
+$Toffoli$门说明了很重要的一点：**量子计算和经典计算可以通过某种形式得到形式上的统一**，从现实世界的角度来看，这一点也是完全合理的，毕竟所有的物理系统都可以用量子力学进行描述，同时，人们也已经证明量子计算机也符合图灵机的标准，尽管对人们来说它难以立即。这种统一的观点能够为量子计算的发展带来很大裨益。
 
 #### 2.2.3 通用量子门集合
 
 假设有一个量子门集合，其中包含了几种量子门，如果其他的量子门都能有这个集合中的元素通过不同的组合而实现【包括满足一定误差的条件】，那么这个量子门集合就是**通用量子门集合**。
 
-目前，这样的通用量子门集合有两个，一个包含量子门：$$CNOT$$ 、$$Hadamard$$ 、$$Phase$$ 和$$\pi / 8$$ ，另一个则包含：$$CNOT$$ 、$$Hadamard$$ 、$$Phase$$ 和$$Toffoli$$ 。
+目前，这样的通用量子门集合有两个，一个包含量子门：$CNOT$ 、$Hadamard$ 、$Phase$ 和$\pi / 8$ ，另一个则包含：$CNOT$ 、$Hadamard$ 、$Phase$ 和$Toffoli$ 。
 
 ![UniversalGateSet](./image/UniversalGateSet.jpg)
 
@@ -318,7 +316,7 @@ $$Toffoli$$门说明了很重要的一点：**量子计算和经典计算可以�
 
 单独的量子门、量子系统并不能够完成真正的计算，只有将它们通过一定的规则和形式组合起来才能进行有用的工作，这样的组合就是**量子线路**，量子计算机等价于量子线路。
 
-目前来看，我认为理解量子线路是进行量子计算和量子编程开发的敲门砖。量子编程与传统编程的区别的一部分也表现在这里。我们平时所做的开发工作，所接触到的编程语言、编程模型，无外乎就是分支、循环、递归等等程序设计元素的组合，但在量子计算中一切都不相同，有时候很简单的工作，比如计算$$1 + 1 = 2$$ ，如果用量子计算机去实现也会大费周折，但是量子计算的魅力也正在于此，从不同的视角和观点重新审视这个世界，就会有不同的感受和收获。
+目前来看，我认为理解量子线路是进行量子计算和量子编程开发的敲门砖。量子编程与传统编程的区别的一部分也表现在这里。我们平时所做的开发工作，所接触到的编程语言、编程模型，无外乎就是分支、循环、递归等等程序设计元素的组合，但在量子计算中一切都不相同，有时候很简单的工作，比如计算$1 + 1 = 2$ ，如果用量子计算机去实现也会大费周折，但是量子计算的魅力也正在于此，从不同的视角和观点重新审视这个世界，就会有不同的感受和收获。
 
 量子线路中主要包括量子门、输入和输出qubit等，每种元素在量子线路中都有其特定的符号表示，我们将常用的符号总结在了下面的图中。
 
@@ -332,21 +330,21 @@ $$Toffoli$$门说明了很重要的一点：**量子计算和经典计算可以�
 
 ​									图3.1  量子线路图示例
 
-这是一个有三个输入的量子线路，三个输入qubit分别为一个为止状态的$$|\varphi  \rangle$$ 和两个$$|0 \rangle$$，我们将$$\varphi \rangle$$ 表示为$$|\varphi \rangle = \alpha |0 \rangle + |1 \rangle$$ 在图中，我们将线路中某一位置的量子态用虚线进行了标示。首先，两个$$| 0 \rangle$$ 经过一个$$H$$ 门和一个$$CNOT$$ 门的作用后，状态变为$$ \frac {1} {\sqrt{2}}(| 00 \rangle + |11 \rangle)$$，此时与第一个量子$$| \varphi \rangle$$ 构成的三量子系统的状态为：
+这是一个有三个输入的量子线路，三个输入qubit分别为一个为止状态的$|\varphi  \rangle$ 和两个$|0 \rangle$，我们将$\varphi \rangle$ 表示为$|\varphi \rangle = \alpha |0 \rangle + |1 \rangle$ 在图中，我们将线路中某一位置的量子态用虚线进行了标示。首先，两个$| 0 \rangle$ 经过一个$H$ 门和一个$CNOT$ 门的作用后，状态变为$ \frac {1} {\sqrt{2}}(| 00 \rangle + |11 \rangle)$，此时与第一个量子$| \varphi \rangle$ 构成的三量子系统的状态为：
 
-​				$$| \varphi_{0} \rangle = |\varphi \rangle \otimes [\frac {1} {\sqrt{2}}(| 00 \rangle + | 11 \rangle)] = \frac{1}{\sqrt{2}}[\alpha |0 \rangle (| 00 \rangle + | 11 \rangle) + \beta |1 \rangle  (| 00 \rangle + | 11 \rangle)]$$ 
+​				$| \varphi_{0} \rangle = |\varphi \rangle \otimes [\frac {1} {\sqrt{2}}(| 00 \rangle + | 11 \rangle)] = \frac{1}{\sqrt{2}}[\alpha |0 \rangle (| 00 \rangle + | 11 \rangle) + \beta |1 \rangle  (| 00 \rangle + | 11 \rangle)]$ 
 
-之后，再又一个$$CNOT$$ 门和$$H$$ 门的作用下，我们得到这个三量子系统的状态为：
+之后，再又一个$CNOT$ 门和$H$ 门的作用下，我们得到这个三量子系统的状态为：
 
-​							$$| \varphi_{1} \rangle = \frac{1}{\sqrt{2}}[\alpha (|00 \rangle + |11 \rangle) + \beta|1 \rangle (|10 \rangle + |01 \rangle)]$$ 
+​							$| \varphi_{1} \rangle = \frac{1}{\sqrt{2}}[\alpha (|00 \rangle + |11 \rangle) + \beta|1 \rangle (|10 \rangle + |01 \rangle)]$ 
 
-​							$$|\varphi_{2}\rangle = \frac{1}{2}[\alpha(|0 \rangle + |1 \rangle)(|00 \rangle + |11 \rangle) + \beta(|0 \rangle - |1 \rangle)(|10 \rangle + |01 \rangle)]$$ 
+​							$|\varphi_{2}\rangle = \frac{1}{2}[\alpha(|0 \rangle + |1 \rangle)(|00 \rangle + |11 \rangle) + \beta(|0 \rangle - |1 \rangle)(|10 \rangle + |01 \rangle)]$ 
 
-状态$$|\varphi_{2} \rangle$$ 又可以写做：
+状态$|\varphi_{2} \rangle$ 又可以写做：
 
-​							$$| \varphi_{2} \rangle = \frac{1}{2}[|00 \rangle (\alpha |0 \rangle + \beta |1 \rangle) + |01 \rangle (\alpha |1 \rangle + \beta |0 \rangle) + |10 \rangle (\alpha |0 \rangle - \beta |1 \rangle) + |11 \rangle (\alpha |1 \rangle - \beta |0 \rangle)]$$ 
+​							$| \varphi_{2} \rangle = \frac{1}{2}[|00 \rangle (\alpha |0 \rangle + \beta |1 \rangle) + |01 \rangle (\alpha |1 \rangle + \beta |0 \rangle) + |10 \rangle (\alpha |0 \rangle - \beta |1 \rangle) + |11 \rangle (\alpha |1 \rangle - \beta |0 \rangle)]$ 
 
-然后，使用测量$$M_{1}$$ 和$$M_{2}$$ 分别对前两个量子进行测量，测量导致量子态坍缩输出的是经典的bit，这一点线路图上也有相应的显示。
+然后，使用测量$M_{1}$ 和$M_{2}$ 分别对前两个量子进行测量，测量导致量子态坍缩输出的是经典的bit，这一点线路图上也有相应的显示。
 
 那么从这个线路图上我们能够得到什么呢？
 
@@ -356,24 +354,24 @@ $$Toffoli$$门说明了很重要的一点：**量子计算和经典计算可以�
 
 这就是量子线路的特点，从中可以看出，它与我们日常所见到的电子线路非常不同。
 
-我们继续讨论上面的量子线路图。在经过了两个测量符测量后，我们对第三个量子进行进一步的转换操作。每一个测量操作会得到两个结果：$$0$$ 或者$$1$$ ，因此我们就会得到4中测量结果，我们将每种结果以及对应的转换后的结果写在下面的表中：
+我们继续讨论上面的量子线路图。在经过了两个测量符测量后，我们对第三个量子进行进一步的转换操作。每一个测量操作会得到两个结果：$0$ 或者$1$ ，因此我们就会得到4中测量结果，我们将每种结果以及对应的转换后的结果写在下面的表中：
 
-表xxx  测量结果【矩阵从右至左产生作用，因此$$X$$写在右边】
+表xxx  测量结果【矩阵从右至左产生作用，因此$X$写在右边】
 
-| $$M_{1}$$ | $$M_{2}$$ |   转换操作   |                  结果                  |
+| $M_{1}$ | $M_{2}$ |   转换操作   |                  结果                  |
 | :-----: | :-----: | :----------: | :------------------------------------: |
-|    0    |    0    | $$Z^{0}X^{0}$$ | $$\alpha |0 \rangle + \beta |1 \rangle$$ |
-|    0    |    1    | $$Z^{0}X^{1}$$ | $$\alpha |1 \rangle + \beta |0 \rangle$$ |
-|    1    |    0    | $$Z^{1}X^{0}$$ | $$\alpha |0 \rangle - \beta |1 \rangle$$ |
-|    1    |    1    | $$Z^{1}X^{0}$$ | $$\alpha |1 \rangle - \beta |0 \rangle$$ |
+|    0    |    0    | $Z^{0}X^{0}$ | $\alpha |0 \rangle + \beta |1 \rangle$ |
+|    0    |    1    | $Z^{0}X^{1}$ | $\alpha |1 \rangle + \beta |0 \rangle$ |
+|    1    |    0    | $Z^{1}X^{0}$ | $\alpha |0 \rangle - \beta |1 \rangle$ |
+|    1    |    1    | $Z^{1}X^{0}$ | $\alpha |1 \rangle - \beta |0 \rangle$ |
 
 现在我们知道了这个线路的输出结果，也知道了这个线路的工作过程，但是！这个线路到底有什么作用呢？从这些结果中也看不出个所以然来。那么我告诉你，我们刚刚进行了一次**量子通信**，你相信吗？
 
-我们现在来设想一下，假设有两个人A和B，我们首先使用$$H$$ 门和$$CNOT$$ 门作用于两个量子态$$|0 \rangle$$ ，这时我们会得到他们的叠加态，也就是图中的$$| \varphi_{0} \rangle$$ ，然后将处于叠加态的两个量子分别交由A和B，随后A和B两个分道扬镳，许多年后，A想起了当年青梅竹马的B，他想送给B一个量子表达自己的思念之情（不要问我为什么要送量子），但是B并不知道A送给他的量子到底是什么状态，并且如果B要测量这个量子，那这个量子立马就会发生坍缩，从而导致B永远也不能知道A到底传送给了他什么，这时候他们当年分离之时各自拥有的那个量子就起作用了，A测量自己拥有的量子和传送的量子，得到一个结果，这个结果由两个bit构成（我们上面的测量结果），分别是：$$00 、01、10、11$$ ，A同时将这个测量结果传送给B，根据这个结果和上面的表格，B就能够知道A到底传送给了他什么。这就是**量子隐形传态**，实际上A并不需要真的给B传送一个量子，他只需要完成测量并将测量结果传送给B就可以了。
+我们现在来设想一下，假设有两个人A和B，我们首先使用$H$ 门和$CNOT$ 门作用于两个量子态$|0 \rangle$ ，这时我们会得到他们的叠加态，也就是图中的$| \varphi_{0} \rangle$ ，然后将处于叠加态的两个量子分别交由A和B，随后A和B两个分道扬镳，许多年后，A想起了当年青梅竹马的B，他想送给B一个量子表达自己的思念之情（不要问我为什么要送量子），但是B并不知道A送给他的量子到底是什么状态，并且如果B要测量这个量子，那这个量子立马就会发生坍缩，从而导致B永远也不能知道A到底传送给了他什么，这时候他们当年分离之时各自拥有的那个量子就起作用了，A测量自己拥有的量子和传送的量子，得到一个结果，这个结果由两个bit构成（我们上面的测量结果），分别是：$00 、01、10、11$ ，A同时将这个测量结果传送给B，根据这个结果和上面的表格，B就能够知道A到底传送给了他什么。这就是**量子隐形传态**，实际上A并不需要真的给B传送一个量子，他只需要完成测量并将测量结果传送给B就可以了。
 
 量子隐形传态描述的是一种量子之间存在的一种超距作用，处于纠缠态的量子，无论它们相隔多远，只要之中一个量子的状态发生了变换，另一个会立即产生相应的变化。但是要特别指出的是，量子隐形传态并不能超光速，以上面的通信过程为例，A在传给B量子的同时还要传输经典bit信息，而这一过程是不能超光速的，如果没有这些进店bit信息，B也就无从知晓传输的量子态，也就无法完成通信过程。因此量子隐形传态并不能超光速。
 
-同时，上面的结果似乎能够让我们克隆一个量子$$|\varphi \rangle$$ ，这么一来就违背了不可克隆原理，但实际上最初的量子$$| \varphi \rangle$$ 在测量后发生了量子态坍缩，我们得到的结果是对其他量子进行一定的量子门操作的结果，因此量子并没有被克隆。
+同时，上面的结果似乎能够让我们克隆一个量子$|\varphi \rangle$ ，这么一来就违背了不可克隆原理，但实际上最初的量子$| \varphi \rangle$ 在测量后发生了量子态坍缩，我们得到的结果是对其他量子进行一定的量子门操作的结果，因此量子并没有被克隆。
 
 ### 3.2 量子线路的矩阵表示
 
@@ -381,21 +379,21 @@ $$Toffoli$$门说明了很重要的一点：**量子计算和经典计算可以�
 
 #### 3.2.1 受控量子门与矩阵
 
-受控量子门的矩阵表示很简单，以双量子系统来说，受控量子门对应矩阵是一个$$4 \times 4$$ 大小的矩阵，矩阵的左上角是一个$$2 \times 2$$ 的单位矩阵，左下角就是相应的被控量子门矩阵了，其他部分都为0。例如我们学过的受控量子门$$CNOT$$ ，它的矩阵表示形式就是：
+受控量子门的矩阵表示很简单，以双量子系统来说，受控量子门对应矩阵是一个$4 \times 4$ 大小的矩阵，矩阵的左上角是一个$2 \times 2$ 的单位矩阵，左下角就是相应的被控量子门矩阵了，其他部分都为0。例如我们学过的受控量子门$CNOT$ ，它的矩阵表示形式就是：
 
-​									$$\begin{bmatrix} 1 \quad 0 \quad 0 \quad 0 \\ 0 \quad 1 \quad 0 \quad 0 \\ 0 \quad 0 \quad 0 \quad 1 \\ 0 \quad 0 \quad 1 \quad 0 \end{bmatrix}$$ 
+​									$\begin{bmatrix} 1 \quad 0 \quad 0 \quad 0 \\ 0 \quad 1 \quad 0 \quad 0 \\ 0 \quad 0 \quad 0 \quad 1 \\ 0 \quad 0 \quad 1 \quad 0 \end{bmatrix}$ 
 
-根据这个规则，我们再来构建其他受控门的矩阵形式，例如受控$$Z$$ 门，它的符号表示和矩阵形式如下图所示：
+根据这个规则，我们再来构建其他受控门的矩阵形式，例如受控$Z$ 门，它的符号表示和矩阵形式如下图所示：
 
 ![ControlledZ](./image/ControlledZ.jpg)
 
-​									图3.2  $$Controlled-Z$$ 门
+​									图3.2  $Controlled-Z$ 门
 
-在上面的$$Controlled-Z$$ 门中，控制qubit在位于上方，目标qubit在下方，如果我们将它们的位置交换一下，那么相应的矩阵会改变吗？答案是不会，我们在下面的图中分别画出了两种线路图和它们的输入输出之间的关系，结果表明，上下位置的颠倒并不会对量子线路的结果造成影响，因此它们的矩阵形式是一样的。
+在上面的$Controlled-Z$ 门中，控制qubit在位于上方，目标qubit在下方，如果我们将它们的位置交换一下，那么相应的矩阵会改变吗？答案是不会，我们在下面的图中分别画出了两种线路图和它们的输入输出之间的关系，结果表明，上下位置的颠倒并不会对量子线路的结果造成影响，因此它们的矩阵形式是一样的。
 
 ![ControlledZReverse](./image/ControlledZReverse.jpg)
 
-   								图3.3  翻转$$Controlled-Z$$门
+   								图3.3  翻转$Controlled-Z$门
 
 #### 3.2.2 量子线路与矩阵
 
@@ -413,7 +411,7 @@ $$Toffoli$$门说明了很重要的一点：**量子计算和经典计算可以�
 
 得到每个分区的矩阵后，整个线路的矩阵表示就是所有分区矩阵按从左到右的顺序相乘所得的矩阵乘积，那么上面的量子线路最终的矩阵表示为：
 
-$$(H \otimes I)(CNOT)(I \otimes Z)(H \otimes H)(CNOT)(I \otimes H)$$ 
+$(H \otimes I)(CNOT)(I \otimes Z)(H \otimes H)(CNOT)(I \otimes H)$ 
 
 虽然上面是双量子系统的线路图，但无论多少个量子，线路图矩阵的构造方法是一样的。
 
@@ -421,34 +419,34 @@ $$(H \otimes I)(CNOT)(I \otimes Z)(H \otimes H)(CNOT)(I \otimes H)$$
 
 ![TrivialGates](./image/TrivialGates.jpg)
 
-​								图3.6  $$3-qubit$$量子线路
+​								图3.6  $3-qubit$量子线路
 
 这样的线路麻烦之处在于，控制量子和目标量子之间跨过了另外的量子，直接用上面分区中的方法是不行的，为此我们要寻找其它方法。
 
-一个量子线路对应一个矩阵，我们将这个矩阵设为$$A$$ ，矩阵作用输入的量子态向量得到相应的输出，这个过程可以描述为：
+一个量子线路对应一个矩阵，我们将这个矩阵设为$A$ ，矩阵作用输入的量子态向量得到相应的输出，这个过程可以描述为：
 
-$$A|\varphi \rangle = | \varphi^{'} \rangle$$ 
+$A|\varphi \rangle = | \varphi^{'} \rangle$ 
 
-以图xxx中右侧的量子门线路为例，我们来求取矩阵$$A$$ 。这个量子门的作用是交换第$$1$$ 和第$$3$$ 个量子态而第二个量子态不受影响，我们将这个三量子系统的输入输出写在表3.1中：
+以图xxx中右侧的量子门线路为例，我们来求取矩阵$A$ 。这个量子门的作用是交换第$1$ 和第$3$ 个量子态而第二个量子态不受影响，我们将这个三量子系统的输入输出写在表3.1中：
 
 *表3.1  输入输出表*
 
 |      输入      |       输出       |
 | :------------: | :--------------: |
-| $$|000 \rangle$$ |  $$|000 \rangle$$  |
-| $$|001 \rangle$$ |  $$|100 \rangle$$  |
-| $$|010\rangle$$  | $$ | 010 \rangle$$ |
-| $$|011 \rangle$$ |  $$|110 \rangle$$  |
-| $$|100 \rangle$$ |  $$|001 \rangle$$  |
-| $$|101 \rangle$$ |  $$|101 \rangle$$  |
-| $$|110 \rangle$$ |  $$|011 \rangle$$  |
-| $$|111 \rangle$$ |  $$|111 \rangle$$  |
+| $|000 \rangle$ |  $|000 \rangle$  |
+| $|001 \rangle$ |  $|100 \rangle$  |
+| $|010\rangle$  | $ | 010 \rangle$ |
+| $|011 \rangle$ |  $|110 \rangle$  |
+| $|100 \rangle$ |  $|001 \rangle$  |
+| $|101 \rangle$ |  $|101 \rangle$  |
+| $|110 \rangle$ |  $|011 \rangle$  |
+| $|111 \rangle$ |  $|111 \rangle$  |
 
 将上表的量子态用矩阵运算的形式可以表示为：
 
-​					$$A \begin{bmatrix} 1 \quad 0 \quad 0 \quad  0  \quad 0 \quad  0 \quad  0 \quad  0 \\ 0 \quad  1  \quad 0  \quad 0 \quad  0  \quad 0  \quad 0  \quad 0 \\ 0  \quad 0 \quad  1 \quad  0  \quad 0  \quad 0 \quad  0  \quad 0 \\ 0 \quad  0 \quad  0  \quad 1  \quad 0 \quad  0 \quad  0 \quad  0  \\ 0  \quad 0 \quad  0 \quad  0 \quad  1  \quad 0 \quad  0 \quad  0 \\ 0 \quad  0 \quad  0 \quad  0 \quad  0 \quad  1 \quad  0 \quad  0 \\ 0 \quad  0  \quad 0  \quad 0  \quad 0  \quad 0  \quad 1  \quad 0 \\ 0 \quad  0  \quad 0  \quad 0  \quad 0  \quad 0  \quad 0  \quad 1 \end{bmatrix} = \begin{bmatrix} 1 \quad 0 \quad 0 \quad  0  \quad 0 \quad  0 \quad  0 \quad  0 \\ 0 \quad  0  \quad 0  \quad 0 \quad  1  \quad 0  \quad 0  \quad 0 \\ 0  \quad 0 \quad 1 \quad  0  \quad 0  \quad 0 \quad  0  \quad 0 \\ 0 \quad  0 \quad  0  \quad 0 \quad 0 \quad  0 \quad 1 \quad  0  \\ 0  \quad 1 \quad  0 \quad  0 \quad  0  \quad 0 \quad  0 \quad  0 \\ 0 \quad  0 \quad  0 \quad  0 \quad  0 \quad  1 \quad  0 \quad  0 \\ 0 \quad  0  \quad 0  \quad 1  \quad 0  \quad 0  \quad 0  \quad 0 \\ 0 \quad  0  \quad 0  \quad 0  \quad 0  \quad 0  \quad 0  \quad 1 \end{bmatrix}$$ 
+​					$A \begin{bmatrix} 1 \quad 0 \quad 0 \quad  0  \quad 0 \quad  0 \quad  0 \quad  0 \\ 0 \quad  1  \quad 0  \quad 0 \quad  0  \quad 0  \quad 0  \quad 0 \\ 0  \quad 0 \quad  1 \quad  0  \quad 0  \quad 0 \quad  0  \quad 0 \\ 0 \quad  0 \quad  0  \quad 1  \quad 0 \quad  0 \quad  0 \quad  0  \\ 0  \quad 0 \quad  0 \quad  0 \quad  1  \quad 0 \quad  0 \quad  0 \\ 0 \quad  0 \quad  0 \quad  0 \quad  0 \quad  1 \quad  0 \quad  0 \\ 0 \quad  0  \quad 0  \quad 0  \quad 0  \quad 0  \quad 1  \quad 0 \\ 0 \quad  0  \quad 0  \quad 0  \quad 0  \quad 0  \quad 0  \quad 1 \end{bmatrix} = \begin{bmatrix} 1 \quad 0 \quad 0 \quad  0  \quad 0 \quad  0 \quad  0 \quad  0 \\ 0 \quad  0  \quad 0  \quad 0 \quad  1  \quad 0  \quad 0  \quad 0 \\ 0  \quad 0 \quad 1 \quad  0  \quad 0  \quad 0 \quad  0  \quad 0 \\ 0 \quad  0 \quad  0  \quad 0 \quad 0 \quad  0 \quad 1 \quad  0  \\ 0  \quad 1 \quad  0 \quad  0 \quad  0  \quad 0 \quad  0 \quad  0 \\ 0 \quad  0 \quad  0 \quad  0 \quad  0 \quad  1 \quad  0 \quad  0 \\ 0 \quad  0  \quad 0  \quad 1  \quad 0  \quad 0  \quad 0  \quad 0 \\ 0 \quad  0  \quad 0  \quad 0  \quad 0  \quad 0  \quad 0  \quad 1 \end{bmatrix}$ 
 
-上面等式左侧的矩阵中，每一列代表一个输入的量子态向量，右侧矩阵中每一列代表一个输出的量子态向量。那么答案很明显了，矩阵$$A$$ 就是上面等式中右边的部分，因为$$A$$实际上右乘了一个单位矩阵。
+上面等式左侧的矩阵中，每一列代表一个输入的量子态向量，右侧矩阵中每一列代表一个输出的量子态向量。那么答案很明显了，矩阵$A$ 就是上面等式中右边的部分，因为$A$实际上右乘了一个单位矩阵。
 
 因此面对上面两个比较麻烦的量子门线路，这样的方法也能很快求出相应的矩阵。实际上，这个方法是通用的，任何的量子线路矩阵都能使用这种方法求出来，只要正确地写出了输入和输出的量子态向量。
 
@@ -613,7 +611,7 @@ namespace Quantum.Bell
 
 现在我们来解释一下上面的代码。上面的代码中定义了一个Q#语言中的 `operation`，`operation`是Q#语言中一个基本的执行单元，它相当于其他编程语言如C/C++、C#和Java中的函数。一个`operation`的参数是一个元组，在`operation`名字之后的括号中指定各个参数，参数之间用逗号分隔，参数的定义形式为：“arg-name : arg-type"，`operation`的返回值与其参数形式类似，在参数列表之后的括号中指定，两个括号之间由一个冒号分隔。Q#语言中，`operation`可以指定多个返回值，也可以将括号留空表示没有返回结果。
 
-一个`operation`中包含一个`body`段，在`body`段中的代码就是该`operation`功能的实现代码。所以上面代码所完成的事就是，定义了一个名为Set的`operation`，它接受两个名称分别为`desired`和`q1`的参数，没有返回值。这个`operation`首先测量`q1`的量子态（M），如果结果与`desired`的量子态相同，则返回，否则就对`q1`应用$$X$$门，使其状态翻转。
+一个`operation`中包含一个`body`段，在`body`段中的代码就是该`operation`功能的实现代码。所以上面代码所完成的事就是，定义了一个名为Set的`operation`，它接受两个名称分别为`desired`和`q1`的参数，没有返回值。这个`operation`首先测量`q1`的量子态（M），如果结果与`desired`的量子态相同，则返回，否则就对`q1`应用$X$门，使其状态翻转。
 
 现在来编写一个测试程序调用这个operation并观察结果。在`Bell.qs`中添加如下代码，可以看到这也是一个`operation`，将其添加在`Set`之后。
 
@@ -642,7 +640,7 @@ operation BellTest (count : Int, initial : Result) : (Int, Int)
 }
 ```
 
-上面的`operation BellTest`中定义了一个循环`count`次的控制结构，在每次循环中，首先将一个量子比特设置为`initial`，然后测量这个量子的状态，如果为1，将变量`numOnes`加一，所有循环结束后，我们将得到在这个过程中共有多少次测量的量子比特状态为$$|1 \rangle$$，多少次为$$|0 \rangle$$。在最后，我们把量子比特重新设置为了$$|0 \rangle$$，使其处于一个特定的状态。
+上面的`operation BellTest`中定义了一个循环`count`次的控制结构，在每次循环中，首先将一个量子比特设置为`initial`，然后测量这个量子的状态，如果为1，将变量`numOnes`加一，所有循环结束后，我们将得到在这个过程中共有多少次测量的量子比特状态为$|1 \rangle$，多少次为$|0 \rangle$。在最后，我们把量子比特重新设置为了$|0 \rangle$，使其处于一个特定的状态。
 
 从上面的代码中可以看出，Q#语言使用了与C#相似的分号、括号等来标示程序的结构，并且Q#也拥有与C#类似的`if`控制语句。
 
@@ -652,7 +650,7 @@ operation BellTest (count : Int, initial : Result) : (Int, Int)
 
 Q#不是一种强类型的编程语言，在定义一个新的变量时，变量的类型由编译器根据其具体值进行推断。
 
-`using`语句是Q#中特有的，它用于为程序分配qubit。在Q#中，所有的qubit都是动态分配和释放的，并且每个qubit的初始状态都为$$|0\rangle$$ 。`using`语句在代码段的起始处分配qubit，并在代码段结束后自动释放它们。
+`using`语句是Q#中特有的，它用于为程序分配qubit。在Q#中，所有的qubit都是动态分配和释放的，并且每个qubit的初始状态都为$|0\rangle$ 。`using`语句在代码段的起始处分配qubit，并在代码段结束后自动释放它们。
 
 Q#中的`for`循环在一个范围之内进行迭代，范围在Q#中是一种独特的数据类型，一个范围可以直接由起始和终止的值来指定，两个值之间使用`..`连接。例如`1..10`就表示1,2,3,4,5,6,7,8,9,10，默认步长为1，如果需要不同的步长值，则直接指定即可，其语法为`1..2..10`，这个范围表示的数值就是1,3,5,7,9。值得注意的是，Q#中的范围是一个**闭区间**，也就是包含起始值和终止值。
 
@@ -687,7 +685,7 @@ using (var sim = new QuantumSimulator())
     {
         var res = BellTest.Run(sim, 1000, initial).Result;
         var (numZeros, numOnes) = res;
-        System.Console.WriteLine($$"Init:{initial,-4} 0s={numZeros,-4} 1s={numOnes,-4}");
+        System.Console.WriteLine($"Init:{initial,-4} 0s={numZeros,-4} 1s={numOnes,-4}");
     }
 }
 System.Console.WriteLine("Press any key to continue...");
@@ -697,7 +695,7 @@ System.Console.ReadKey();
 上面的C#代码包含4个部分：
 
 - 构造一个量子模拟器，即代码中的`sim`，Q#量子程序均需要由这个模拟器来运行。
-- 计算量子算法需要的参数，上面的代码中，BellTest需要的`count`为1000，`initial`是量子比特需要的初始值，上面代码中定义的`initials`是一个数组，其中包含两个值`Zero`和`One`，它们相当于C语言中的枚举类型，相信你也猜到了，它们分别代表了一个qubit的基本量子态$$|0 \rangle$$ 和$$|1 \rangle$$ 。
+- 计算量子算法需要的参数，上面的代码中，BellTest需要的`count`为1000，`initial`是量子比特需要的初始值，上面代码中定义的`initials`是一个数组，其中包含两个值`Zero`和`One`，它们相当于C语言中的枚举类型，相信你也猜到了，它们分别代表了一个qubit的基本量子态$|0 \rangle$ 和$|1 \rangle$ 。
 - 运行量子算法程序。每一个`Q# operation`都会生成一个名字相同的C#类，这个类拥有一个名为`run`的方法，它返回最终`operation`执行的结果。
 - 处理`operation`返回的结果。在上面的程序中，`res`接受`operation`产生的结果。
 
@@ -810,7 +808,7 @@ namespace Quantum.Bell
 
 ### 4.4 创建量子叠加态
 
-上面的程序中，我们所操作的qubit均处于基本状态$$|0\rangle$$ 或$$| 1 \rangle$$，这导致最后的结果仍然与经典计算无异，没有明显的量子计算的特征，现在我们应用$$H$$门来使qubit处于叠加态，再来看看最后的结果。将下面的代码输入`BellTest`中：
+上面的程序中，我们所操作的qubit均处于基本状态$|0\rangle$ 或$| 1 \rangle$，这导致最后的结果仍然与经典计算无异，没有明显的量子计算的特征，现在我们应用$H$门来使qubit处于叠加态，再来看看最后的结果。将下面的代码输入`BellTest`中：
 
 ```c#
 H(qubits[0]);
@@ -852,7 +850,7 @@ Init:Zero 0s=484  1s=516
 Init:One  0s=522  1s=478
 ```
 
-从结果可以看出，测量经过$$H$$ 门作用的量子后得到的测量结果$$|0\rangle$$ 和$$|1 \rangle$$ 的概率均在0.5左右。
+从结果可以看出，测量经过$H$ 门作用的量子后得到的测量结果$|0\rangle$ 和$|1 \rangle$ 的概率均在0.5左右。
 
 ### 4.5 创建量子纠缠
 
@@ -964,7 +962,7 @@ operation BellTest (count : Int, initial: Result) : (Int,Int)
                     var res = BellTest.Run(sim, 1000, initial).Result;
                     var (numZeros, numOnes, agree) = res;
                     System.Console.WriteLine(
-                        $$"Init:{initial,-4} 0s={numZeros,-4} 1s={numOnes,-4} agree={agree,-4}");
+                        $"Init:{initial,-4} 0s={numZeros,-4} 1s={numOnes,-4} agree={agree,-4}");
                 }
             }
             System.Console.WriteLine("Press any key to continue...");
@@ -978,7 +976,7 @@ Init:Zero 0s=499  1s=510  agree=1000
 Init:One  0s=490  1s=510  agree=1000
 ```
 
-从结果看，对于第一个量子比特而言，统计结果并没有改变（50%的概率为$$|1 \rangle$$ ,50%的概率为$$| 0 \rangle$$），但是我们对第二个量子比特的测量值总是与第一个量子比特的测量值保持一致，这个结果也充分展现了处于`Bell State`的量子系统的特征。
+从结果看，对于第一个量子比特而言，统计结果并没有改变（50%的概率为$|1 \rangle$ ,50%的概率为$| 0 \rangle$），但是我们对第二个量子比特的测量值总是与第一个量子比特的测量值保持一致，这个结果也充分展现了处于`Bell State`的量子系统的特征。
 
 在将要结束本章之前，我们再来回顾一下上面的代码示例，体会一下Q#语言独有的特性。我们发现，Q#已经为我们提供了基本的量子门操作，比如我们用到的`H`门、`X`门操作等，并且使用`M()`就能完成对量子态的测量。Q#提供的这些设施，保持了与我们所学习的量子计算中相关符号的一致，这使得我们应用Q#的难度大大降低，使用起来更加得心应手。
 
@@ -997,7 +995,7 @@ Q#提供的基本数据类型如下，除去这些基本类型，其他类型都
 - `Bool`：布尔类型，取值为`true`或`false`
 - `Qubit`：`Qubit`表示qubit，只能通过使用`operation`对其进行各种操作，Qubit是引用类型，与它相关的资源管理等工作由开发环境负责，用户在使用时必须申请所需要的qubit。
 - `Pauli`：表示`Pauli`门中的一个，量子计算中，一共有四个`Pauli`门：`PauliX`、`PauliY`、`PauliZ`和`PauliI`。
-- `Result`：`Result`表示测量一个qubit可能得到的结果，它是由两个可能的取值构成的结构体，这两个值分别是：`One`和`Zero`，`Zero`表示特征值$$| 0 \rangle$$，`One`表示特征值$$| 1 \rangle$$ 。
+- `Result`：`Result`表示测量一个qubit可能得到的结果，它是由两个可能的取值构成的结构体，这两个值分别是：`One`和`Zero`，`Zero`表示特征值$| 0 \rangle$，`One`表示特征值$| 1 \rangle$ 。
 - `Range`：`Range`表示整数序列，如`1..5`这个`Range`就表示`（1,2,3,4,5）`这个整数序列，注意在Q#中，`Range`所表示的范围是一个闭区间，包含头尾的数值。
 - `String`：Unicode字符串，在Q#中，`String`主要用于当程序抛出异常或出现错误时向用户提供信息。
 - `operation`：可调用类型，用来定义和执行量子操作，相当于其他高级语言中的函数。
@@ -1329,7 +1327,7 @@ for (index in 0 .. n-2) {
 
 `repeat`语句的执行过程为：首先执行循环体，然后测试条件表达式是否为`true`，如果为`true`，那么这个`repeat`语句就执行完毕了，如果为`false`，则执行`fixup`语句中的内容，然后重新开始`repeat`语句的执行，如此循环直至结束。
 
-下面的代码展示了`repeat`语句的使用，该代码定义了量子门$$V3=(I+2iZ)/√5$$ 。
+下面的代码展示了`repeat`语句的使用，该代码定义了量子门$V3=(I+2iZ)/√5$ 。
 
 ```C#
 using ancilla = Qubit[1] {
@@ -1407,7 +1405,7 @@ operation opName ([args]) : ([return-values])
 
 每一个`operation`中都有一个`body`代码段，其中是真正要进行的量子操作，包括量子门的应用、qubit的管理和测量等。但这并不是说所有的代码必须写在`body`体中，在`body`体之外的地方仍然可以进行变量定义等操作。
 
-下面的代码定义了一个名为`BitFlip`的`operation`，从名字就可以看出这个`operation`的作用是对量子态进行翻转。它的参数列表中只有一个名为`target`类型为`Qubit`变量，并且没有返回值，在`body`体中，只有一个应用$$X$$门的操作，完成量子态的翻转。
+下面的代码定义了一个名为`BitFlip`的`operation`，从名字就可以看出这个`operation`的作用是对量子态进行翻转。它的参数列表中只有一个名为`target`类型为`Qubit`变量，并且没有返回值，在`body`体中，只有一个应用$X$门的操作，完成量子态的翻转。
 
 ```C#
 operation BitFlip(target : Qubit) : () {
@@ -1516,11 +1514,11 @@ return (results, qubits);
 `fail`语句结束一个`operation`的执行，并向调用者返回一个出错信息。`fail`语句由`fail`关键字和一个代表错误信息的字符串组成。下面的代码展示了`fail`语句的用法：
 
 ```c#
-fail $$"Impossible state reached";
+fail $"Impossible state reached";
 ```
 
 ```C#
-fail $$"Syndrome {syn} is incorrect";
+fail $"Syndrome {syn} is incorrect";
 ```
 
 ### 6.6 operation和function的类型
@@ -1615,58 +1613,58 @@ using (register = Qubit[5]) {
 }
 ```
 
-使用`using`分配得到的每一个qubit，其初始状态均为`Zero`，上面的代码中，我们使用`using`像系统申请了5个qubit，它们组成了一个$$5-qubit$$的量子系统，且该系统的初始状态为：$$|0 \rangle \otimes | 0 \rangle \otimes | 0 \rangle \otimes | 0 \rangle \otimes | 0 \rangle$$ 。需要注意的是，在当前代码段结束时，这些分配的qubit会立即被释放，并且不能再在程序的其它地方使用。
+使用`using`分配得到的每一个qubit，其初始状态均为`Zero`，上面的代码中，我们使用`using`像系统申请了5个qubit，它们组成了一个$5-qubit$的量子系统，且该系统的初始状态为：$|0 \rangle \otimes | 0 \rangle \otimes | 0 \rangle \otimes | 0 \rangle \otimes | 0 \rangle$ 。需要注意的是，在当前代码段结束时，这些分配的qubit会立即被释放，并且不能再在程序的其它地方使用。
 
-在这里需要强调一下qubit的管理方式，在系统中，所有的qubit被统一管理，我们使用`using`语句分配得到的qubit实际上是系统中真正的qubit的引用，我们对其施加的每一次操作，都直接改变着系统底层这些qubit的状态。通常而言，我们希望每一次分配得到的qubit均处于确定的$$|0 \rangle$$中，因此，为了保证这一点，在每次使用完qubit后，我们都应该将其重新恢复到$$|0 \rangle$$，以保证下次申请时，qubit仍处于确定的状态$$| 0 \rangle$$ 。在Q#中，可以使用`Reset`将qubit的状态恢复为$$| 0 \rangle$$ 。
+在这里需要强调一下qubit的管理方式，在系统中，所有的qubit被统一管理，我们使用`using`语句分配得到的qubit实际上是系统中真正的qubit的引用，我们对其施加的每一次操作，都直接改变着系统底层这些qubit的状态。通常而言，我们希望每一次分配得到的qubit均处于确定的$|0 \rangle$中，因此，为了保证这一点，在每次使用完qubit后，我们都应该将其重新恢复到$|0 \rangle$，以保证下次申请时，qubit仍处于确定的状态$| 0 \rangle$ 。在Q#中，可以使用`Reset`将qubit的状态恢复为$| 0 \rangle$ 。
 
 ### 7.2 基本量子门
 
-我们已经学习过量子计算中常见的量子门，包括$$PauliX、PauliY、PauliZ、H、S、T、CNOT、SWAT$$等，Q#为我们直接提供了这些门，它们都是`operation`类型且均为Q#标准库的一部分。我们将这些基本的量子门以及它们的签名式列出如下：
+我们已经学习过量子计算中常见的量子门，包括$PauliX、PauliY、PauliZ、H、S、T、CNOT、SWAT$等，Q#为我们直接提供了这些门，它们都是`operation`类型且均为Q#标准库的一部分。我们将这些基本的量子门以及它们的签名式列出如下：
 
 |  名称  |                     签名式                     |                          量子门矩阵                          |
 | :----: | :--------------------------------------------: | :----------------------------------------------------------: |
-|  $$X$$   |     `(Qubit => () : Adjoint, Controlled)`      |    $$\begin{bmatrix} 0 \quad 1 \\ 1 \quad 0 \end{bmatrix}$$    |
-|  $$Y$$   |     `(Qubit => () : Adjoint, Controlled)`      |   $$\begin{bmatrix} 0 \quad -i \\ i \qquad 0 \end{bmatrix}$$   |
-|  $$Z$$   |     `(Qubit => () : Adjoint, Controlled)`      |   $$\begin{bmatrix} 1 \qquad 0 \\ 0 \quad -1 \end{bmatrix}$$   |
-|  $$H$$   |     `(Qubit => () : Adjoint, Controlled)`      | $$\frac {1} {\sqrt{2}} \begin{bmatrix} 1 \qquad 1 \\ 1 \quad -1 \end{bmatrix}$$ |
-|  $$S$$   |     `(Qubit => () : Adjoint, Controlled)`      |    $$\begin{bmatrix} 1 \quad 0 \\ 0 \quad i \end{bmatrix}$$    |
-|  $$T$$   |     `(Qubit => () : Adjoint, Controlled)`      | $$\begin{bmatrix} 1 \qquad 0 \\ 0 \quad e^{i \pi / 4} \end{bmatrix}$$ |
-| $$CNOT$$ | `((Qubit, Qubit) => () : Adjoint, Controlled)` | $$\begin{bmatrix} 1 \quad 0 \quad 0 \quad 0 \\ 0 \quad 1 \quad 0 \quad 0 \\ 0 \quad 0 \quad 0 \quad 1 \\ 1 \quad 0 \quad 1 \quad 0 \end{bmatrix}$$ |
-| $$SWAP$$ | `((Qubit, Qubit) => () : Adjoint, Controlled)` | $$\begin{bmatrix}         1 & 0 & 0 & 0 \\         0 & 0 & 1 & 0 \\         0 & 1 & 0 & 0 \\         0 & 0 & 0 & 1     \end{bmatrix}$$ |
+|  $X$   |     `(Qubit => () : Adjoint, Controlled)`      |    $\begin{bmatrix} 0 \quad 1 \\ 1 \quad 0 \end{bmatrix}$    |
+|  $Y$   |     `(Qubit => () : Adjoint, Controlled)`      |   $\begin{bmatrix} 0 \quad -i \\ i \qquad 0 \end{bmatrix}$   |
+|  $Z$   |     `(Qubit => () : Adjoint, Controlled)`      |   $\begin{bmatrix} 1 \qquad 0 \\ 0 \quad -1 \end{bmatrix}$   |
+|  $H$   |     `(Qubit => () : Adjoint, Controlled)`      | $\frac {1} {\sqrt{2}} \begin{bmatrix} 1 \qquad 1 \\ 1 \quad -1 \end{bmatrix}$ |
+|  $S$   |     `(Qubit => () : Adjoint, Controlled)`      |    $\begin{bmatrix} 1 \quad 0 \\ 0 \quad i \end{bmatrix}$    |
+|  $T$   |     `(Qubit => () : Adjoint, Controlled)`      | $\begin{bmatrix} 1 \qquad 0 \\ 0 \quad e^{i \pi / 4} \end{bmatrix}$ |
+| $CNOT$ | `((Qubit, Qubit) => () : Adjoint, Controlled)` | $\begin{bmatrix} 1 \quad 0 \quad 0 \quad 0 \\ 0 \quad 1 \quad 0 \quad 0 \\ 0 \quad 0 \quad 0 \quad 1 \\ 1 \quad 0 \quad 1 \quad 0 \end{bmatrix}$ |
+| $SWAP$ | `((Qubit, Qubit) => () : Adjoint, Controlled)` | $\begin{bmatrix}         1 & 0 & 0 & 0 \\         0 & 0 & 1 & 0 \\         0 & 1 & 0 & 0 \\         0 & 0 & 0 & 1     \end{bmatrix}$ |
 
 我们曾经说个，任意一个单量子门，都能由其它量子门通过一定的变换表示出来，其中的一种变换为：
 
-​							$$U = e^{i\alpha}R_z(\beta)R_y(\gamma )R_x(\delta )$$ 
+​							$U = e^{i\alpha}R_z(\beta)R_y(\gamma )R_x(\delta )$ 
 
-其中，$$U$$为任意的单量子门，
+其中，$U$为任意的单量子门，
 
-​						$$R_z(\beta) = e^{-i\beta Z/2} = cos \frac{\beta}{2}I - isin{\frac {\beta}{2}}Z = \begin{vmatrix}e^{-i\beta/2} & 0 \\ 0 & e^{i\beta/2} {2}\end{vmatrix}$$ 
+​						$R_z(\beta) = e^{-i\beta Z/2} = cos \frac{\beta}{2}I - isin{\frac {\beta}{2}}Z = \begin{vmatrix}e^{-i\beta/2} & 0 \\ 0 & e^{i\beta/2} {2}\end{vmatrix}$ 
 
-​						$$R_y(\gamma) = e^{-i\gamma Y/2} = cos \frac{\gamma}{2}I - isin{\frac {\gamma}{2}}Y = \begin{vmatrix}cos \frac{\gamma}{2} & -sin \frac{\gamma}{2}\\ sin \frac{\gamma}{2} & cos \frac{\gamma}{2}\end{vmatrix}$$ 
+​						$R_y(\gamma) = e^{-i\gamma Y/2} = cos \frac{\gamma}{2}I - isin{\frac {\gamma}{2}}Y = \begin{vmatrix}cos \frac{\gamma}{2} & -sin \frac{\gamma}{2}\\ sin \frac{\gamma}{2} & cos \frac{\gamma}{2}\end{vmatrix}$ 
 
-​						$$R_x(\delta) = e^{-i\delta X/2} = cos \frac{\delta}{2}I - isin{\frac {\delta}{2}}X = \begin{vmatrix}cos \frac{\delta}{2} & -i sin \frac{\delta}{2} \\ -isin \frac{\delta}{2} & cos \frac{\delta}{2}\end{vmatrix}$$ 
+​						$R_x(\delta) = e^{-i\delta X/2} = cos \frac{\delta}{2}I - isin{\frac {\delta}{2}}X = \begin{vmatrix}cos \frac{\delta}{2} & -i sin \frac{\delta}{2} \\ -isin \frac{\delta}{2} & cos \frac{\delta}{2}\end{vmatrix}$ 
 
-上面的$$R_{z}(\beta)、R_{y}(\gamma)、R_{x}(\delta)$$ 均是将量子门绕不同的坐标轴旋转一定的角度实现的。Q#中同样提供了这几个旋转操作对应的`operation`。
+上面的$R_{z}(\beta)、R_{y}(\gamma)、R_{x}(\delta)$ 均是将量子门绕不同的坐标轴旋转一定的角度实现的。Q#中同样提供了这几个旋转操作对应的`operation`。
 
-$$Rx$$：`((Double, Qubit) => () : Adjoint, Controlled)`
+$Rx$：`((Double, Qubit) => () : Adjoint, Controlled)`
 
-$$Ry$$：`((Double, Qubit) => () : Adjoint, Controlled)`
+$Ry$：`((Double, Qubit) => () : Adjoint, Controlled)`
 
-$$Rz$$：`((Double, Qubit) => () : Adjoint, Controlled)`
+$Rz$：`((Double, Qubit) => () : Adjoint, Controlled)`
 
 上面三个`operation`中，第一个参数为`Double`类型，指出旋转的角度。除了这三个用于旋转的`operation`，Q#还提供另外几种旋转操作：
 
-$$R$$：`((Pauli, Double, Qubit) => () : Adjoint, Controlled)`
+$R$：`((Pauli, Double, Qubit) => () : Adjoint, Controlled)`
 
-$$R$$是Q#中最基本的旋转操作，其他所有的旋转都能够由它实现。它的实际作用可以表示为：
+$R$是Q#中最基本的旋转操作，其他所有的旋转都能够由它实现。它的实际作用可以表示为：
 
-$$\qquad \qquad \qquad\begin{equation}    R(\sigma, \phi) \mathrel{=}    e^{-i \phi \sigma / 2},\end{equation}=cos \frac{\sigma}{2}I - isin \frac{\sigma}{2}\phi$$
+$\qquad \qquad \qquad\begin{equation}    R(\sigma, \phi) \mathrel{=}    e^{-i \phi \sigma / 2},\end{equation}=cos \frac{\sigma}{2}I - isin \frac{\sigma}{2}\phi$
 
-其中，$$\sigma$$是将要旋转的角度，$$\phi$$则表示需要应用的量子门。
+其中，$\sigma$是将要旋转的角度，$\phi$则表示需要应用的量子门。
 
-$$R1$$：`((Double, Qubit) => () : Adjoint, Controlled)`
+$R1$：`((Double, Qubit) => () : Adjoint, Controlled)`
 
-$$R1$$ 表示将qubit绕$$| 1 \rangle$$旋转一定的角度。
+$R1$ 表示将qubit绕$| 1 \rangle$旋转一定的角度。
 
 ### 7.3 测量
 
@@ -1794,7 +1792,7 @@ catch (AggregateException e)
         if (inner is ExecutionFailException failException)
         {
             // Print the message it contains
-            Console.WriteLine($$" {failException.Message}");
+            Console.WriteLine($" {failException.Message}");
         }
     }
 }
@@ -2181,3 +2179,14 @@ N. David Mermin . 《Quantum Computer Science》
 **4. Q#中的参数类型好泛型**
 
 **5. 量子测量部分需要重新编写，漏洞较多**
+
+
+
+
+
+### 
+
+### 
+
+
+
