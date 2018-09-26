@@ -8,9 +8,9 @@ for a perfect experience.*
 
 
 
-**$version: 0.1.1$**
+**$version: 0.1.2$**
 
-**$date:2018-05-10$**
+**$date:2018-09-26$**
 
 
 
@@ -484,7 +484,7 @@ Q#是一门非常年轻的语言，它由微软在2017年推出。Q#从Python、
 
 我们以Windows系统为例，如果没有安装Visual Studio 2017，可以通过以下步骤安装免费的 Community版Visual Studio 2017：
 
-1. 访问[Visual Studio下载页面](#) ，并选择Community版本进行下载（如果有钱也可以下载另外的版本）
+1. 访问[Visual Studio下载页面](https://visualstudio.microsoft.com/zh-hans/downloads/) ，并选择Community版本进行下载（如果有钱也可以下载另外的版本）
 2. 下载完毕后双击安装文件
 3. **注意**：安装开始前程序会让你选择特定的开发环境和工具，记得一定要选上 `Universal Windows Platform development` **和** `.NET desktop development`
 4. 在选择好需要的环境和工具后点击“安装”即可。
@@ -493,7 +493,7 @@ Q#是一门非常年轻的语言，它由微软在2017年推出。Q#从Python、
 
 使用Q#语言需要安装Q#语言的开发工具包，安装过程也是很简单的。
 
-1. 访问[微软Q#语言主页](#)，点击左上方的 "Download Now" 按钮，此时页面将跳转至Q#开发工具包的下载界面
+1. 访问[微软Q#语言主页](https://marketplace.visualstudio.com/items?itemName=quantum.DevKit)，点击页面上的 "Download" 按钮，此时页面将跳转至Q#开发工具包的下载界面
 2. 在下载界面的右侧，填写一些必要的信息，包括你的名字、联系方式等等，之后点击右下角的 "Download Now" 按钮，就会开始下载开发工具包。工具包是一个vsix格式的文件，大小只有1M左右。
 3. 双击下载好的文件，稍等片刻Q#语言的开发工具就安装在了Visual Studio2017中。
 
@@ -501,7 +501,7 @@ Q#是一门非常年轻的语言，它由微软在2017年推出。Q#从Python、
 
 我们使用微软提供的一些例子和库对刚刚安装的环境进行检测，以验证我们是否正确安装好了Q#语言的开发环境。
 
-1. 克隆GitHub上微软官方提供的[Q#语言例程](#)
+1. 克隆GitHub上微软官方提供的[Q#语言例程](https://github.com/microsoft/quantum)
 
    ```c
    git clone https://github.com/Microsoft/Quantum.git
@@ -1722,7 +1722,7 @@ return rs;
 
 ### 7.5 borrowing
 
-`borrowing`语句用于在代码块中分配临时使用的量子位，用户应保证这些借来的量子位与借来时的状态相同。关于附属的量子位的用法可以参看这个示例：[*Factoring using 2n+2 qubits with Toffoli based modular multiplication*](#) 。
+`borrowing`语句用于在代码块中分配临时使用的量子位，用户应保证这些借来的量子位与借来时的状态相同。关于附属量子位的用法可以参看这个示例：[*Factoring using 2n+2 qubits with Toffoli based modular multiplication*](https://arxiv.org/pdf/1611.07995v1.pdf) 。
 
 `borrowing`语句的使用方法如下所示：
 
